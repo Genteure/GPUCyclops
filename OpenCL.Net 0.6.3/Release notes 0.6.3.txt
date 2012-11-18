@@ -1,0 +1,93 @@
+OpenCL.Net 0.6.3 Release notes
+------------------------------
+* Various minor changes in .cl example files to make them work on nVidia
+  cards. All examples work on my nVidia card now, and I'm not aware of
+  any more nVidia specific issues.
+
+OpenCL.Net 0.6.2 Release notes
+------------------------------
+* Finally got around to buying an nVidia card and fixed some issues that
+  pretty much made the library unusable on the nVidia platform.
+  There are still some issues, but at least it's usable now and it passes
+  the Unit Tester on both AMD and nVidia cards.
+
+OpenCL.Net 0.6.1 Release notes
+------------------------------
+* Bugfix regarding embarrassing DateTime checking error in OpenCLManager
+  Will now avoid compilation even if you haven't disabled last acccess
+  time updating in NTFS.(Don't ask. =)
+
+* Allowing caching of sources compiled from strings in OpenCLManager
+
+* Implemented cache size limitation in OpenCLManager
+
+* Finished implementation of replacable filesystem support in OpenCLManager
+  It's not tested yet, in the sense of actually implementing an alternative
+  file system, but OpenCLManager now does all its IO through a FileSystem
+  object that uses regular .Net IO. I suspect I'll make an example that
+  compiles sources from a .zip file along with the freeze of the library
+  in 0.7, which should uncover any design flaws before the freeze.
+
+* I've gotten some requests for support for vector types. This was actually 
+  added in 0.6, but wasn't mentioned in the release notes. The implementation 
+  consists of a bunch of structs in enum.cs called TypeN, where Type is an 
+  OpenCL type and N is 2, 3, 4, 8 or 16. One example is Float4. Component 
+  notation is the same as in OpenCL S-notation, where S0 is the first memory
+  location. The Kernel object has corresponding setter functions.
+
+* Removed IComponent interface from OpenCLManager. This is a slight breaking
+  change, but it's needed due to the interface creating problems with
+  IDispose. It doesn't have much practical impact. Just initialize it
+  programmatically like in the examples.
+
+
+OpenCL.Net 0.6 Release notes
+----------------------------
+Lots of stuff going on in this release.
+
+* OpenCL 1.1 Support.
+
+* The new OpenCLManager helper class is being used in the ImageCrossfade
+  example and provides caching of compiled binary images, as well as
+  simplified setup through such mechanisms as it being possible to just
+  provide a list of which extensions you require and get uninteresting
+  devices filtered out.
+
+* New convenience functions in the Mem class for loading data from managed
+  arrays.
+
+* Most functions taking IntPtr arguments can now also accept int and long
+  arguments where it makes sense to do so. This results in a massive
+  reduction in casting, in all cases where dynamic transition between 32
+  and 64 bit doesn't add value.(Say specifying image dimensions for example.
+  Very few, if any, humans process images that are more than 2^31-1 pixels
+  high or wide for example. There's also the issue that .Net doesn't really
+  support indices longer than 32 bit ints anyway even in the 64 bit version.
+  Basically, there are some good arguments to be made for only working with
+  ints and not worrying about dynamic sizes across the board.
+  And now you can.
+
+
+
+
+
+
+Minor breaking change: I had to make a minor adjstment in the SetArg overload that takes an IntPtr and the SetIntPtrArg functions. It's a non issue unless you have been using these functions to set arguments with platform specific types in kernels, like size_t, but if you do - read on.
+
+Here's what's been done and why:
+
+The original functions write 64 bit values if the context a kernel has been created in has at least one 64 bit device in it, and 32 bits otherwise. New functions always write host sized values. There are some new functions Kernel.SetSizeTArg that cater for kernel arguments that have their sizes determined by the device's own number of address lines.
+
+The original functions attempted to have a single function for setting the variably sized datatypes. It turns out that this is impossible, however, due to there being two different rationales at work for determining sizes in OpenCL. The first one has close ties to the host side of things and applies to memory handles, like buffer and image descriptors. These sizes follow whatever the host uses as its native work unit. These tend to be transformed into pointers like "global int4* pMyBuffer" on the device/kernel source side.
+
+However, other datatypes, most importantly size_t are defined to be locked to the number of address lines on the device. It's really not possible to get those right in every case with the current standard, because the standard at the same time locks down the size to a device and have kernel objects that are not directly tied to any device at all, but rather are tied to a context. Amusingly, contexts can contain both 32 and 64 bit devices. When this happens, you're still only setting the argument once, so it can only have one size, but according to the standard the size must also be device specific.
+
+This is solved by writing 64 bit values in the above case og mixed 32 and 64 bit devices as that's the only conceivable way it can work. In other cases the SetSizeTArg function computes argument size according to whatever the number of address lines on the devices is.
+
+So basically:
+
+Use SetArg(0,IntPtr) to set memory handles, samplers etc that follow host sizes, and all types of arguments that have fixed sizes.
+
+Use SetSizeTArg(0,int/long/IntPtr) to set size_t-style kernel arguments.
+
+Realize that the standard has some issues with platform specific types when combining 32 bit and 64 bit devices in a single context.

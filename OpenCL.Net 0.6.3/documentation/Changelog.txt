@@ -1,0 +1,333 @@
+﻿August 16, 2010
+---------------
+A bunch of changes. Most functions taking IntPtr arguments now have overloads accepting int and long in place of IntPtr. This is done in the interest of minimizing casting hell for simple programs, while maintaining an API that has full functionality on both 64 and 32 bit platforms.
+
+The OpenCLManager is getting its first test run out in the wild.
+
+Added support for OpenCL 1.1.
+
+Added a hell of a lot of test code to the unit tester.
+
+Added some convenience functions to  the Mem class to make loading data from managed arrays simpler.
+
+June 30, 2010
+-------------
+Releasing a version 0.5. I finally had the time to check/fix code
+associated with saving and loading binary images. The original code
+couldn't be tested because of lack of support in ATI's drivers. However,
+now it works. I've also started work on an OpenCLManager component.
+It's not completely done yet designwise, but the one in this release is
+capable of automatically maintaining cached binary versions of source
+files. It may be worth having a look at, even though it will undoubtedly
+change in the future. I'm a bit unsure if it makes sense to create a full
+blown component that's configurable from the GUI in Visual Studio or if
+I should strip it down to a simple source/binary manager that can be
+hooked onto a Context.
+
+May 3, 2010
+-----------
+ATI's SDK now officially supports images, and I did some testing/bugfixing
+to make sure the example works with the release.
+
+March 9, 2010
+-------------
+Added preliminary image support. As ATI don't officially support it yet,
+you have to set the environment variable GPU_IMAGES_SUPPORT=1 to turn it
+on in the driver.(If you don't turn it on all the functions will probably
+just fail miserably, and either way - their behavior is undefined unless
+you check the ImageSupport property in the devices you're using.) Images
+are created using the various "Create.." methods in the Context class.
+I've decided to depart slightly from the usual straight mapping to OpenCL
+types, and created an OCLImage subclass for the Mem objects created with
+the image creation functions. This makes it easier to access image
+specific properties in the debugger.
+
+March 7, 2010
+-------------
+Added the possibility of changing which device is used in the CrossFade
+example. Also decided to change the arguments in the OpenCL function from
+size_t to ints. Although I believe the current code for setting IntPtr
+arguments will work for all reasonable OpenCL implementations over the
+32/64 bit gap, it does make assumptions about compiler behavior.
+I therefore recommend avoiding size_t arguments in any OpenCL kernel
+function that may be run on unpredictable platforms.
+Go with explicit ints or longs if at all possible.
+
+The api class now suppresses unmanaged code checks, which should provide a
+small speedup.
+
+March 1, 2010
+-------------
+When adding the CrossFade example, I thought it was going to be a really good
+simple example... well, I was wrong. I used size_t as the input argument type,
+and that turned out to create all kinds of strange issues with mixes of 64
+and 32 bit architectures. Not only can IntPtr on the .Net end be different
+from size_t on the OpenCL size if the device in question has its AddressBits
+set to 32, but this can actually change somewhat dynamically, depending on
+whether a Context contains a 64 bit device or not.
+
+I'm not sure how this works on nVidia, but ATI's driver actually compiles
+different code for these two cases. This may not sound too bad, but SetArg
+requires the size of the argument to be set to be known, which means that I
+actually have to check that the context contains a 64 bit device, if it does,
+I can set the IntPtr directly. If not, I have to generate a 32 bit "pointer"
+and set that instead. This may sound bad, but Mem objects(pointers on the
+OpenCL side) are always 64 bit(If the host processor is a 64 bit machine
+that is), so they're not affected by this. It does mean that applications
+not checking the address space of the devices they're working with could end
+up getting their arguments chopped.(There's a quick way to do this in the
+Context class. I added a public flag that is true if a context contains a
+64 bit device.) Most people will probably just want to use types with known
+sizes though.
+
+The reason the behavior is so strange is that OpenCL demands that the
+prototype of a function is identical over all devices in a Context. Which
+means that whatever size the compiler chooses for size_t must be identical
+over all compilations/devices, otherwise it would be impossible to ever set
+the argument using OpenCL's clSetKernelArg. To be honest... I think it
+would have been a hell of a lot less confusing to simply demand identical
+addressing functionality across all devices in a Platform, but I suppose
+it's possible to live with. It's not like people have to use dynamic types
+like size_t either.
+
+In the end, at least the example showed me a few things about OpenCL that
+I hadn't really thought about.
+
+Note that Visual Basic code now has to set Mem and Sampler arguments
+using new type specific functions. For C# and other languages supporting
+the polymorphic Set functions, there should be no changes visible on the
+application level.
+
+
+January 31, 2010
+----------------
+Incompatible checkin. The original API used a plugin system where I had
+ the option to load different DLLs for different OpenCL vendors. This is
+ not needed any longer, as the OpenCL ICD is available, and it seems
+ unlikely that I would be capable of doing workarounds for compatibility
+ inside this library anyway. I have therefore collapsed the API into the
+ OpenCL class, and made that class static. Changes required to applications
+ should be extremely minor if one was using the high level API. Instead of
+ Instantiating OpenCL, one instead uses the static enumeration methods/
+ properties in the OpenCL class:
+
+Platform[] p =OpenCL.GetPlatforms();
+
+int platformCount = OpenCL.NumberOfPlatforms;
+Platform p = OpenCL.GetPlatform(0);
+
+Everything else remains the same.I've been thinking about doing this for
+a long time, but held off on doing it because of the incompatibility.
+However, I got a request to clean it up - so I figured it was about time.
+I don't expect to make any more breaking changes after this though.
+
+January 12, 2010
+----------------
+Finally got some hardware! ^_^. Of course, not a single example worked
+out of the box, but at least the errors were in the examples and not in
+the api. The examples are fixed now, and the problem was me forgetting
+about having to copy back results. Also added Flush, Finish to the
+CommandQueue class as well as profiling support. When profiling
+functionality is turned on in the CommandQueue creation function,
+profiling counters can be read out using methods in the Event class.
+
+The examples will still use the first platform and device in the list,
+which may or may not be a cpu device.
+
+January 4, 2010
+---------------
+Added a VS2010 project as well as some bugfixes. Good news is that
+VS2010 can debug 64 bit projects in native mode, meaning that you can
+actually debug 64 bit  opencl code now, assuming you don't mind being
+tied to .NET Framework 4. I know I don't mind, but I left the old
+vs2008 solutions and project files there for people who don't want to
+use vs2010.
+
+Newer ATI compiler, .Net runtime etc unearthed a few more bugs. I'll
+be cleaning up and finishing up this project as far as possible in
+the next week or two. That is - bringing it up to date with current
+developments on the ATI driver side as well as finally testing it
+with real GPU hardware, with focus on making sure it works well in
+64 bit mode.
+
+August 22, 2009
+---------------
+Started work on a unit tester, which apparently was a good idea.
+Several embarrassing bugs were eliminated in the process, such as
+infinite recursion in a few of the wrapper functions where I had
+forgotten to add the "cl" prefix. What fun. =)
+
+Also fleshed out the low level API a bit more. I think there's only
+one function missing for full OpenCL 1.0 support at that level.
+
+Added a bunch of new SetXXXArg functions to the Kernel class. They
+should be a bit easier to use from visual basic than the overloaded
+SetArg.
+
+What has been tested at this point could be said to boil down to
+"that which does not involve images". Which has a natural
+explanation. ATI's version of OpenCL doesn't support them yet. Even
+here there are some exceptions, but they're getting fewer as I flesh
+out the unit-tester. The high level API is certainly usable at this
+point and far more fun to play around with than the C API. I'm not
+promising that it's frozen or anything, but feel free to play with
+it.
+
+There are two caveats though:
+
+1) If you're going to make your own project to test stuff with, be
+aware that ATI's driver refuses to run clBuild() in the managed
+debugger(I think there may be some environment issue so it can't
+find its own compiler or something), so you have to enable native
+debugging in the project's debug tab.
+
+2) I have no idea if it even runs with Nvidia's driver. I'd be a bit
+surprised if it didn't, but feel free to tell me if it works or not.
+=) I'll buy an Nvidia card once the DX11 cards hit the shelves, but
+that's probably a few months off. In the meantime I'll focus on
+testing the other stuff and using this library in the private project
+that motivated it in the first place.
+
+
+
+August 20, 2009
+---------------
+
+Got a basic VB project up and running and cleaned up the OpenCL event
+handling a bit. All the Enqueue* methods now have two new overloads.
+One that chops off the "out event" parameter, and another that also
+chops out the event wait list and its size parameter.
+
+This solves the problem of forcing the caller to process events for
+every single enqueued function without dragging pointers all the way
+to the high level API.
+
+Also changed the SetArg(*) methods so they take the parameter number
+as an integer instead of as an uint to make things less painful for
+VB. I'm also considering adding aliases for SetArg that specify the
+type in the method name due to cryptic runtimeerror messages in VB
+when dealing with the overloaded ones that are so convenient in
+strongly typed languages.
+
+I've decided to leave events as IntPtrs for now, even though an Event
+wrapper class has been checked in. There's not really much use for an
+event class other than to garbage collect events(Which has a dangerous
+aspect to it. It might be better to fail fast during development if
+there are that kind of memory leaks present.) and make code look
+prettier due to better type checking. I haven't completely decided
+yet, we'll see what happens after the unit tests are done. Converting
+to use an event class should mostly involve a few regular expression
+search and replaces anyway.
+
+
+August 19, 2009
+---------------
+
+OpenCLNet - Quick feature walkthough
+
+The library includes a low level c# bridge to OpenCL 1.0 that's almost
+complete. On top of that, we have classes for each of the major concepts
+in OpenCL.
+
+Platform
+Device
+Context
+Mem
+Sampler
+Program
+Kernel
+CommandQueue
+
+These classes expose all OpenCL information as properties, which is great
+for debugging purposes, as you have all information at your fingertips in
+the debugger and can drill down through objects to figure out what's
+going on rather than having to write code to dump debug information into
+text files. At the moment, not all of them are complete, and much remains
+untested.
+Error handling is exception based and results in far more readable code
+than the C equivalent.
+
+A quick example:
+
+OpenCL openCL = new OpenCL(new ATI());
+Platform openCLPlatform = openCL.GetPlatform( 0 );
+Context openCLContext = openCLPlatform.CreateDefaultContext( null, IntPtr.Zero );
+Program mandelBrotProgram = openCLContext.CreateProgramWithSource( File.ReadAllText( "Mandelbrot.cl" ) );
+mandelBrotProgram.Build();
+Kernel mandelbrotKernel = mandelBrotProgram.CreateKernel( "Mandelbrot" );
+Device[] openCLDevices = openCLPlatform.QueryDevices( DeviceType.ALL );
+CommandQueue openCLCQ = openCLContext.CreateCommandQueue( openCLDevices[0], (CommandQueueProperties)0 );
+
+//... blah blah... lots of other stuff happens, and then we want to call the kernel
+
+mandelbrotKernel.SetArg( 0, Left );
+mandelbrotKernel.SetArg( 1, Top );
+mandelbrotKernel.SetArg( 2, Right );
+mandelbrotKernel.SetArg( 3, Bottom );
+mandelbrotKernel.SetArg( 4, bd.Stride );
+mandelbrotKernel.SetArg( 5, mandelbrotMemBuffer );
+
+IntPtr _event;
+IntPtr[] globalWorkSize = new IntPtr[2] { new IntPtr( BitmapWidth ), new IntPtr( BitmapHeight ) };
+IntPtr[] localWorkSize = new IntPtr[2] { new IntPtr( 1 ), new IntPtr( 1 ) };
+openCLCQ.EnqueueNDRangeKernel( mandelbrotKernel, 2u, null, globalWorkSize, null, 0, null, out _event );
+
+openCL.CL.WaitForEvents( 1, new IntPtr[] { _event } );
+openCL.CL.ReleaseEvent( _event );
+
+
+Or, in english, instantiate an OpenCL API from ATI's DLL(this will likely
+work also on nvidia systems and will go away in the future unless there
+are major interop bugs that demand vendor specific code in a low layer).
+Grab platform 0. The platform class also contains methods to enumerate them,
+if desired. Create a context to get at the more meatier functionality. Use
+the context to load and build a source. Extract the known kernel function,
+create a command queue, set arguments and fire off the kernel. Setting
+arguments is very simple in most cases, as there are overloads for most
+common types. In the event that you have to pass structs by value, or
+something like that, something similar to the raw memory copy function of
+the C api is also available. Once the arguments are set, we can just enqueue
+a kernel operation on the commandqueue with EnqueueNDRangeKernel.
+
+Waiting for results is one thing that will change in the public API before
+any release is made. There are two questions regarding that: One is if it's
+worthwhile to create a class to wrap events and simply live with the fact
+that we'll have to allocate a dynamic object for each enqueued operation.
+The other thing is that the current high level API demands that every function
+that can return an event does so. It's an out parameter, so you can't specify
+a null pointer. I'm leading towards overloading all functions that can return
+events with ones that lack the trailing "out event" argument and just pass
+null pointers transparently below the highlevel API.
+
+The basic initialization would probably be wrapped in a
+try{}catch(OpenCLException){} block. OpenCLExceptions contain both a text
+string explaining th cause of the error, as well as the OpenCL error code
+that caused the exception.
+
+
+
+
+
+
+
+The DLL imports are close to complete, but inaccesible to some .Net languages
+due to use of low level features. This will probably not change. What will
+change, however, is that the high level API will get a cleanup so it will
+interoperate across the board. It should be pretty close already, but I
+haven't had time to check. As it is, C# appears to work for simple tests, but
+a more thorough test application is needed.
+
+Currently, the low level API is referenced through an instance of the ATI
+class that implements the OpenCLAPI interface. I'm a bit unsure about
+whether that abstraction is needed or not, but I decided to do it this way
+both because I don't have an nvidia card in my development system and because
+it could be nice to have a place to plug in workarounds for vendor specific
+bugs. If you stick to the high level API and bootstrap the system from the
+OpenCL class, as shown in the OpenCLTest example, you should pretty much be
+immune to such low-level issues however.
+
+Immediate future plans include finishing the last few fuctions of the lowlevel
+API and removing non-interopable constructs from the high level classes so I
+can get a simple example in visual basic up and running. Once that's done,
+it's probably time to write unit tests to make sure I haven't screwed up any
+of the function bridges.
