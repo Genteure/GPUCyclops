@@ -147,7 +147,7 @@ namespace OpenCLNet
     {
         internal static class Configuration
         {
-            public const string Library = "opencl.dll";
+            public const string Library = @"C:\Program Files\NVIDIA Corporation\OpenCL\opencl64.dll";
         }
     
         static OpenCLAPI()
