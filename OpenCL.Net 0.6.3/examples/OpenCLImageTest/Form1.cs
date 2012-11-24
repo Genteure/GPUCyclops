@@ -203,7 +203,7 @@ namespace OpenCLImageTest
         {
             TestImage = (Bitmap)Bitmap.FromFile(@"Input0.png");
             TestImage = new Bitmap(TestImage, 256, 256);
-            TestImageOutput = new Bitmap(256, 256, MyPixelFormat); //panelScaled.Width, panelScaled.Height, MyPixelFormat); // PixelFormat.Format32bppArgb);
+            TestImageOutput = new Bitmap(256, 256, MyPixelFormat); // panelScaled.Width, panelScaled.Height, MyPixelFormat); // PixelFormat.Format32bppArgb);
 
             if (OpenCL.NumberOfPlatforms <= 0)
             {
@@ -236,12 +236,11 @@ namespace OpenCLImageTest
 
             BitmapData bd = windowsBitmap.LockBits(new Rectangle(0, 0, windowsBitmap.Width, windowsBitmap.Height), ImageLockMode.WriteOnly, MyPixelFormat); // PixelFormat.Format32bppRgb);
             //ocl_Out_Image = oclContext.CreateImage2D(MemFlags.WRITE_ONLY | MemFlags.USE_HOST_PTR, MyImageFormat, bd.Width, bd.Height, bd.Stride, bd.Scan0);
-            MemFlags flags = MemFlags.WRITE_ONLY | MemFlags.ALLOC_HOST_PTR;
-            //MemFlags flags = MemFlags.WRITE_ONLY | MemFlags.USE_HOST_PTR;
+            //MemFlags flags = MemFlags.WRITE_ONLY | MemFlags.ALLOC_HOST_PTR;
+            MemFlags flags = MemFlags.WRITE_ONLY | MemFlags.USE_HOST_PTR;
             //ocl_Out_Image = oclContext.CreateImage2D(flags, MyImageFormat, bd.Width, bd.Height);
-            buffer = oclContext.CreateBuffer(flags, bd.Stride * bd.Height); //, bd.Scan0);
-            windowsBitmap.UnlockBits(bd);
-            windowsBitmap.Dispose();
+            buffer = oclContext.CreateBuffer(flags, bd.Stride * bd.Height, bd.Scan0);
+            //windowsBitmap.Dispose();
 
             origin[0] = (IntPtr)0;
             origin[1] = (IntPtr)0;
@@ -261,7 +260,7 @@ namespace OpenCLImageTest
             // CCT (11/23/2012): this call fails with MEM_OBJECT_ALLOCATION_FAILURE on NVidia GLX 580
             IntPtr p = oclCQ.EnqueueMapBuffer(buffer, true, MapFlags.READ, IntPtr.Zero, (IntPtr)(bd.Height * bd.Stride));
 
-            windowsBitmap = new Bitmap(bd.Width, bd.Height, bd.Stride, MyPixelFormat, p);
+            //windowsBitmap = new Bitmap(bd.Width, bd.Height, bd.Stride, MyPixelFormat, p);
             oclCQ.EnqueueUnmapMemObject(buffer, p);
 
             //IntPtr imageRowPitch;
@@ -270,6 +269,7 @@ namespace OpenCLImageTest
             //IntPtr p = oclCQ.EnqueueMapImage(ocl_Out_Image, true, MapFlags.READ, origin, region, out imageRowPitch, out imageSlicePitch);
             //oclCQ.EnqueueUnmapMemObject(ocl_Out_Image, p);
             oclCQ.Finish();
+            windowsBitmap.UnlockBits(bd);
             //ocl_Out_Image.Dispose();
             buffer.Dispose();
         }
