@@ -15,12 +15,12 @@ kernel void FilterImage( float inputLeft,
 	int width = get_global_size(0);
 	int height = get_global_size(1);
 	
-	float nX = x/(float)(width-1);
-	float nY = y/(float)(height-1);
+	float nX = x/(float)width;
+	float nY = y/(float)height;
 	float inputX = inputLeft+inputWidth*nX;
 	float inputY = inputTop+inputHeight*nY;
-	float outputX = outputLeft+width*outputWidth*nX;
-	float outputY = outputTop+height*outputHeight*nY;
-	uint4 rgba = read_imageui( input, sampler, (float2)(inputX,inputY) );
+	float outputX = outputLeft+outputWidth*x;
+	float outputY = outputTop+outputHeight*y;
+	uint4 rgba = read_imageui(input, sampler, (float2)(inputX,inputY));
 	write_imageui(output,convert_int2((float2)(outputX,outputY)),rgba);
 }

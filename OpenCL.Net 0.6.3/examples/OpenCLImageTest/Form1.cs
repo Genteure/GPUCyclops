@@ -150,7 +150,7 @@ namespace OpenCLImageTest
         public void CreateOCLImages(Context context)
         {
             OCLInputImage = CreateOCLImageFromWindowsBitmap(TestImage);
-            OCLOutputImage = oclContext.CreateImage2D(MemFlags.WRITE_ONLY, MyImageFormat, 256, 256, 0, IntPtr.Zero); // panelScaled.Width, panelScaled.Height, 0, IntPtr.Zero);
+            OCLOutputImage = oclContext.CreateImage2D(MemFlags.WRITE_ONLY, MyImageFormat, TestImageOutput.Width, TestImageOutput.Height, 0, IntPtr.Zero);
             OCLSampler = oclContext.CreateSampler(true, AddressingMode.CLAMP_TO_EDGE, FilterMode.LINEAR);
         }
 
@@ -203,7 +203,7 @@ namespace OpenCLImageTest
         {
             TestImage = (Bitmap)Bitmap.FromFile(@"Input0.png");
             TestImage = new Bitmap(TestImage, 256, 256);
-            TestImageOutput = new Bitmap(256, 256, MyPixelFormat); // panelScaled.Width, panelScaled.Height, MyPixelFormat); // PixelFormat.Format32bppArgb);
+            TestImageOutput = new Bitmap(panelScaled.Width, panelScaled.Height, MyPixelFormat); // PixelFormat.Format32bppArgb);
 
             if (OpenCL.NumberOfPlatforms <= 0)
             {
@@ -249,7 +249,7 @@ namespace OpenCLImageTest
             region[1] = (IntPtr)bd.Height;
             region[2] = (IntPtr)1;
 
-            // CCT (11/23/2012): this call fails with MEM_OBJECT_ALLOCATION_FAILURE on NVidia GLX 580 if flags = MemFlags.USE_HOST_PTR
+            // CCT (11/23/2012): this call fails with MEM_OBJECT_ALLOCATION_FAILURE on NVidia GLX 580 if flags == MemFlags.USE_HOST_PTR and input dimensions != output dimensions
             oclCQ.EnqueueCopyImageToBuffer(ocl_Image, buffer, origin, region, IntPtr.Zero);
 
             // CCT (11/23/2012): this call fails with OUT_OF_RESOURCES on NVidia GLX 580 if flags = MemFlags.USE_HOST_PTR
