@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoStreamCodecs", "VideoStreamCodecs.csproj", "{EC73AD17-795A-442B-8EDF-3565D2124F66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{E206905B-DC28-419D-A530-6597922C130D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EC73AD17-795A-442B-8EDF-3565D2124F66}.Release|x86.ActiveCfg = Release|Any CPU
+		{E206905B-DC28-419D-A530-6597922C130D}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E206905B-DC28-419D-A530-6597922C130D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{E206905B-DC28-419D-A530-6597922C130D}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{E206905B-DC28-419D-A530-6597922C130D}.Debug|x86.ActiveCfg = Debug|x86
+		{E206905B-DC28-419D-A530-6597922C130D}.Debug|x86.Build.0 = Debug|x86
+		{E206905B-DC28-419D-A530-6597922C130D}.Release|Any CPU.ActiveCfg = Release|x86
+		{E206905B-DC28-419D-A530-6597922C130D}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{E206905B-DC28-419D-A530-6597922C130D}.Release|Mixed Platforms.Build.0 = Release|x86
+		{E206905B-DC28-419D-A530-6597922C130D}.Release|x86.ActiveCfg = Release|x86
+		{E206905B-DC28-419D-A530-6597922C130D}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EC73AD17-795A-442B-8EDF-3565D2124F66}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>VideoStreamCodecs</RootNamespace>
+    <AssemblyName>VideoStreamCodecs</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\GenericMediaStreamFactory.cs" />
+    <Compile Include="Common\ImageLib.cs" />
+    <Compile Include="Common\IUniSerializable.cs" />
+    <Compile Include="Common\Logger.cs" />
+    <Compile Include="Common\MediaTimeUtils.cs" />
+    <Compile Include="Driver\BaseRecode.cs" />
+    <Compile Include="Driver\GenericRecodeNOC.cs" />
+    <Compile Include="Driver\GenericRecodeWRC.cs" />
+    <Compile Include="Formats\Generic\AudioCodec.cs" />
+    <Compile Include="Formats\Generic\BitReader.cs" />
+    <Compile Include="Formats\Generic\CacheManager.cs" />
+    <Compile Include="Formats\Generic\GenericAudioTrack.cs" />
+    <Compile Include="Formats\Generic\GenericCacheManager.cs" />
+    <Compile Include="Formats\Generic\GenericFragment.cs" />
+    <Compile Include="Formats\Generic\GenericMediaStream.cs" />
+    <Compile Include="Formats\Generic\GenericMediaTrack.cs" />
+    <Compile Include="Formats\Generic\GenericMetaTrack.cs" />
+    <Compile Include="Formats\Generic\GenericTrackFormat.cs" />
+    <Compile Include="Formats\Generic\GenericVideoTrack.cs" />
+    <Compile Include="Formats\Generic\MediaHandler.cs" />
+    <Compile Include="Formats\Generic\MetaCodec.cs" />
+    <Compile Include="Formats\Generic\TimeArithmetic.cs" />
+    <Compile Include="Formats\Generic\VideoCodec.cs" />
+    <Compile Include="Formats\Interfaces\ASCIIEncoding.cs" />
+    <Compile Include="Formats\Interfaces\Codec.cs" />
+    <Compile Include="Formats\Interfaces\FastTrace.cs" />
+    <Compile Include="Formats\Interfaces\Hints.cs" />
+    <Compile Include="Formats\Interfaces\IAudioTrack.cs" />
+    <Compile Include="Formats\Interfaces\IFragment.cs" />
+    <Compile Include="Formats\Interfaces\IMediaStream.cs" />
+    <Compile Include="Formats\Interfaces\IMediaTrack.cs" />
+    <Compile Include="Formats\Interfaces\IMediaTrackSliceEnumerator.cs" />
+    <Compile Include="Formats\Interfaces\ITrackFormat.cs" />
+    <Compile Include="Formats\Interfaces\IVideoTrack.cs" />
+    <Compile Include="Formats\Interfaces\RawTrackInfo.cs" />
+    <Compile Include="Formats\JPG-FJCore\DCT.cs" />
+    <Compile Include="Formats\JPG-FJCore\DecodedJpeg.cs" />
+    <Compile Include="Formats\JPG-FJCore\Decoder\HuffmanTable.cs" />
+    <Compile Include="Formats\JPG-FJCore\Decoder\JpegComponent.cs" />
+    <Compile Include="Formats\JPG-FJCore\Decoder\JpegDecoder.cs" />
+    <Compile Include="Formats\JPG-FJCore\Decoder\JpegFrame.cs" />
+    <Compile Include="Formats\JPG-FJCore\Decoder\JpegHuffmanTable.cs" />
+    <Compile Include="Formats\JPG-FJCore\Decoder\JpegQuantizationTable.cs" />
+    <Compile Include="Formats\JPG-FJCore\Decoder\JpegScan.cs" />
+    <Compile Include="Formats\JPG-FJCore\Encoder\JpegEncoder.cs" />
+    <Compile Include="Formats\JPG-FJCore\FDCT.cs" />
+    <Compile Include="Formats\JPG-FJCore\Filter\Convolution.cs" />
+    <Compile Include="Formats\JPG-FJCore\Filter\FilterBase.cs" />
+    <Compile Include="Formats\JPG-FJCore\Filter\FilterLowpassResize.cs" />
+    <Compile Include="Formats\JPG-FJCore\Filter\FilterNNResize.cs" />
+    <Compile Include="Formats\JPG-FJCore\Filter\GrayImage.cs" />
+    <Compile Include="Formats\JPG-FJCore\Image.cs" />
+    <Compile Include="Formats\JPG-FJCore\IO\BinaryReader.cs" />
+    <Compile Include="Formats\JPG-FJCore\IO\BinaryWriter.cs" />
+    <Compile Include="Formats\JPG-FJCore\IO\JpegBinaryReader.cs" />
+    <Compile Include="Formats\JPG-FJCore\JpegMarker.cs" />
+    <Compile Include="Formats\JPG-FJCore\Resize\ImageResizer.cs" />
+    <Compile Include="Formats\JPG-FJCore\YCbCr.cs" />
+    <Compile Include="Formats\JPG-FJCore\ZigZag.cs" />
+    <Compile Include="Formats\JPGFileSequence\FileSequence.cs" />
+    <Compile Include="Formats\MicrosoftFMP4\ISMHandler\ISMCFile.cs" />
+    <Compile Include="Formats\MicrosoftFMP4\ISMHandler\ISMElement.cs" />
+    <Compile Include="Formats\MicrosoftFMP4\ISMHandler\ISMFile.cs" />
+    <Compile Include="Formats\MicrosoftFMP4\ISMHandler\ISMLFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Formats\MicrosoftFMP4\ISMHandler\ISMVFile.cs" />
+    <Compile Include="Formats\MicrosoftFMP4\ISMVHandler\ISMAudioTrack.cs" />
+    <Compile Include="Formats\MicrosoftFMP4\ISMVHandler\ISMVideoTrack.cs" />
+    <Compile Include="Formats\MicrosoftFMP4\ISMVHandler\ISMVStream.cs" />
+    <Compile Include="Formats\MicrosoftFMP4\ISMVHandler\ISMVTrackFormat.cs" />
+    <Compile Include="Formats\MP4\Boxes\a_ftyp\FileTypeBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\Box.cs" />
+    <Compile Include="Formats\MP4\Boxes\BoxReader.cs" />
+    <Compile Include="Formats\MP4\Boxes\BoxType.cs" />
+    <Compile Include="Formats\MP4\Boxes\BoxTypes.cs" />
+    <Compile Include="Formats\MP4\Boxes\BoxWriter.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\a_mvhd\MovieHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_iods\ObjectDescriptorBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\a_tkhd\TrackHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\a_mdhd\MediaHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\b_hdlr\HandlerReferenceBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\dinf\DataInformationBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\dinf\dref\DataEntry.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\dinf\dref\DataEntryFlags.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\dinf\dref\DataReferenceBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\dinf\dref\url\DataEntryUrlBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\dinf\dref\urn\DataEntryUrnBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\hmhd\HintMediaHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\MediaInformationBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\nmhd\NullMediaHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\smhd\SoundMediaHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\stbl\ctts\CompositionTimeToSample.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\stbl\SampleTableBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\stbl\stco\ChunkOffsetBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\stbl\stsc\SampleToChunkBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\stbl\stsd\SampleDescriptionsBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\stbl\stss\SyncSampleMapBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\stbl\stsz\SampleSizeBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\stbl\stts\DecodingTimeToSampleBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\c_minf\vmhd\VideoMediaHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\b_mdia\MediaBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\EdtsBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\TrackBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\b_trak\TrackReferenceBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\c_mvex\a_mehd\MovieExtendsHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\c_mvex\b_trex\TrackExtendsBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\c_mvex\MovieExtendsBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\d_udta\UserDataBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\MovieMetadataBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\b_moov\RenderMatrix.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\a_mfhd\MovieFragmentHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\b_traf\a_tfhd\TrackFragmentHeaderBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\b_traf\a_tfhd\TrackFragmentHeaderBoxFlags.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\b_traf\b_trun\TrackFragmentRunBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\b_traf\b_trun\TrackFragmentRunBoxFlags.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\b_traf\b_trun\TrackFragmentRunSample.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\b_traf\c_sdtp\IndependentAndDisposableSample.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\b_traf\c_sdtp\IndependentAndDisposableSamplesBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\b_traf\d_uuid\UserUniqueIDBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\b_traf\TrackFragmentBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\c_moof\MovieFragmentBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\d_mdat\MediaDataBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\e_mfra\a_tfra\TrackFragmentRandomAccessBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\e_mfra\a_tfra\TrackFragmentRandomAccessEntry.cs" />
+    <Compile Include="Formats\MP4\Boxes\e_mfra\b_mfro\MovieFragmentRandomAccessOffsetBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\e_mfra\MovieFragmentRandomAccessBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\FreeBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\FullBox.cs" />
+    <Compile Include="Formats\MP4\Boxes\RawFrameData.cs" />
+    <Compile Include="Formats\MP4\Exceptions\Fmp4ParserException.cs" />
+    <Compile Include="Formats\MP4\Exceptions\InvalidBoxException.cs" />
+    <Compile Include="Formats\MP4\Exceptions\UnexpectedBoxException.cs" />
+    <Compile Include="Formats\MP4\Exceptions\UnexpectedBoxSizeException.cs" />
+    <Compile Include="Formats\MP4\Fragments\Fragment.cs" />
+    <Compile Include="Formats\MP4\Fragments\FragmentGenerator.cs" />
+    <Compile Include="Formats\MP4\Fragments\FragmentType.cs" />
+    <Compile Include="Formats\MP4\MP4Stream.cs" />
+    <Compile Include="Formats\MP4\MP4StreamPayload.cs" />
+    <Compile Include="Formats\MP4\MP4StreamReader.cs" />
+    <Compile Include="Formats\MP4\MP4StreamWriter.cs" />
+    <Compile Include="Formats\MP4\MP4TrackFormat.cs" />
+    <Compile Include="Formats\MP4\Utils\Array.cs" />
+    <Compile Include="Formats\MP4\Utils\AssetLock.cs" />
+    <Compile Include="Formats\MP4\Utils\EnumUtils.cs" />
+    <Compile Include="Formats\MP4\Utils\H264Utilities.cs" />
+    <Compile Include="Formats\MP4\Utils\MP4Utils.cs" />
+    <Compile Include="Formats\MP4\Utils\SizeCalculator.cs" />
+    <Compile Include="Formats\MP4\Utils\SizeChecker.cs" />
+    <Compile Include="Formats\MP4\Utils\WaveFormatEx.cs" />
+    <Compile Include="Formats\QBOX\FlashbackCacheManager.cs" />
+    <Compile Include="Formats\QBOX\QBox.cs" />
+    <Compile Include="Formats\QBOX\QBoxAudioTrack.cs" />
+    <Compile Include="Formats\QBOX\QBoxStream.cs" />
+    <Compile Include="Formats\QBOX\QBoxTrackFormat.cs" />
+    <Compile Include="Formats\QBOX\QBoxUtils.cs" />
+    <Compile Include="Formats\QBOX\QBoxVideoTrack.cs" />
+    <Compile Include="Formats\QBOX\QMed.cs" />
+    <Compile Include="H264\BitReader.cs" />
+    <Compile Include="H264\CABACTables.cs" />
+    <Compile Include="H264\CodedSliceIDR.cs" />
+    <Compile Include="H264\CodedSliceNonIDR.cs" />
+    <Compile Include="H264\CodedSliceWithoutPartitioning.cs" />
+    <Compile Include="H264\HRDParams.cs" />
+    <Compile Include="H264\MacroBlockLayer.cs" />
+    <Compile Include="H264\MacroBlockPrediction.cs" />
+    <Compile Include="H264\NetworkAbstractionLayerUnit.cs" />
+    <Compile Include="H264\PictureParameterSet.cs" />
+    <Compile Include="H264\ResidualBlockCABAC.cs" />
+    <Compile Include="H264\ResidualBlockCAVLC.cs" />
+    <Compile Include="H264\ResidualData.cs" />
+    <Compile Include="H264\SequenceParameterSet.cs" />
+    <Compile Include="H264\SliceData.cs" />
+    <Compile Include="H264\SliceHeader.cs" />
+    <Compile Include="H264\SubMacroBlockPrediction.cs" />
+    <Compile Include="H264\VUIParams.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Formats\MP4\c051533_ISO_IEC_14496-12_2008.pdf" />
+    <None Include="Formats\MP4\[MS-MMSP] %282%29.pdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Formats\MP4\Asset Fragment.jpg" />
+    <Content Include="Formats\MP4\Smooth Format.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
