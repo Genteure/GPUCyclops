@@ -782,6 +782,15 @@ namespace Media.Formats.MP4
         // Compressor name has first 2 bytes which is the readable length, the rest are char's or null bytes
         CompressorName = "";
         ushort len = reader.ReadUInt16();
+        // NOTE: Some encoders use only one byte for count of compressor name, so here
+        // we test for whether the length is valid. If not valid, only the first byte is
+        // used as the length.
+        if (len > 30)
+        {
+          byte[] b = BitConverter.GetBytes(len);
+          len = (ushort)b[0];
+          CompressorName += (char)b[1];
+        }
         for (int i=0; i<30; i++) {
           if (i < len)
             CompressorName += reader.ReadChar();
