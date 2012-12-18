@@ -788,8 +788,16 @@ namespace Media.Formats.MP4
         if (len > 30)
         {
           byte[] b = BitConverter.GetBytes(len);
-          len = (ushort)b[0];
-          CompressorName += (char)b[1];
+          if (BitConverter.IsLittleEndian)
+          {
+            len = (ushort)b[1];
+            CompressorName += (char)b[0];
+          }
+          else
+          {
+            len = (ushort)b[0];
+            CompressorName += (char)b[1];
+          }
         }
         for (int i=0; i<30; i++) {
           if (i < len)
