@@ -33,7 +33,7 @@ namespace Media.H264
     {
     }
 
-    public void Read(BitReader bitReader)
+    public override void Read(BitReader bitReader)
     {
       base.Read(bitReader);
 

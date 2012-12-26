@@ -105,7 +105,8 @@ namespace Media.H264
       for (int i = 0; i < N; i++)
       {
         if (GetNextBit())
-          retVal += shifter >> i;
+          retVal += shifter;
+        shifter >>= 1;
       }
 
       return retVal;

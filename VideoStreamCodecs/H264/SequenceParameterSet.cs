@@ -43,7 +43,7 @@ namespace Media.H264
     {
     }
 
-    public void Read(BitReader bitReader)
+    public override void Read(BitReader bitReader)
     {
       base.Read(bitReader);
 
@@ -92,13 +92,6 @@ namespace Media.H264
       {
         vuiParams = new VUIParams();
         vuiParams.Read(bitReader);
-        //if (vuiParams.AspectRatioInfoPresent)
-        //{
-        //  if ((vuiParams.AspectRatio == VUIParams.Extended_SAR) && (vuiParams.SARWidth > 0) && (vuiParams.SARHeight > 0))
-        //    gWidth = (uint)(gWidth * ((double)vuiParams.SARWidth) / ((double)vuiParams.SARHeight));
-        //  else if ((vuiParams.AspectRatio > 0) && (vuiParams.AspectRatio < 17))
-        //    gWidth = (uint)(gWidth * ((double)vui_aspect_x[vuiParams.AspectRatio]) / ((double)vui_aspect_y[vuiParams.AspectRatio]));
-        //}
       }
     }
   }

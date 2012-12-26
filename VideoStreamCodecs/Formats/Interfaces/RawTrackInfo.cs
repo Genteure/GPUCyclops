@@ -5,7 +5,7 @@ using System.Xml;
 using System.Text;
 using System.IO;
 using Media.Formats.Generic;
-using Media;
+using Media.H264;
 
 namespace Media.Formats
 {
@@ -340,10 +340,10 @@ namespace Media.Formats
           totalSize += (4 + naluLen);
           // parse the SPS bit stream, just to get the correct width and height of video.
           BitReader bitReader = new BitReader(new MemoryStream(buf));
-          H264SPS sps = new H264SPS();
+          SequenceParameterSet sps = new SequenceParameterSet((uint)naluLen);
           sps.Read(bitReader);
-          Width = (int)sps.gWidth;
-          Height = (int)sps.gHeight;
+          Width = (int)sps.Width;
+          Height = (int)sps.Height;
           if (sps.VUIParametersPresent)
           {
             AspectRatioX = sps.vuiParams.AspectRatioX;

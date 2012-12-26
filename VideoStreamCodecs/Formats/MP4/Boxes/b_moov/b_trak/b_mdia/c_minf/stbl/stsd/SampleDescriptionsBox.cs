@@ -180,24 +180,22 @@ namespace Media.Formats.MP4
 
               seqParamCountByte = reader.ReadByte(); // first 3 bits are reserved and set to 1
               seqParamCount = (byte)(seqParamCountByte & 0x1F); // numOfSequenceParameterSets
-              for (int i = 0; i < seqParamCount; i++) {
-                // for the moment we read and throw away this information...
-                // perhaps we should store it properly?? so far we have only seen
-                // seqParamCount = 0
+              SPS = new SequenceParameterSet[seqParamCount];
+              for (int i = 0; i < seqParamCount; i++)
+              {
                 seqParamLength = reader.ReadUInt16();
                 seqParamSetData = new byte[seqParamLength];
                 reader.Read(seqParamSetData, 0, seqParamSetData.Length);
-                SPS = ParseSPS(seqParamSetData);
+                SPS[i] = ParseSPS(seqParamSetData);
               }
 
               picParamCount = reader.ReadByte();
+              PPS = new PictureParameterSet[picParamCount];
               for (int i = 0; i < picParamCount; i++) {
-                // same as above... we are not storing the information for more than
-                // one of these... WARNING!!
                 picParamLength = reader.ReadUInt16();
                 picParamSetData = new byte[picParamLength];
                 reader.Read(picParamSetData, 0, picParamSetData.Length);
-                PPS = ParsePPS(picParamSetData);
+                PPS[i] = ParsePPS(picParamSetData);
               }
           }
       }
@@ -323,8 +321,8 @@ namespace Media.Formats.MP4
         return pps;
       }
 
-      public SequenceParameterSet SPS;
-      public PictureParameterSet PPS;
+      public SequenceParameterSet[] SPS;
+      public PictureParameterSet[] PPS;
   }
 
   public class AnyPrivBox : Box

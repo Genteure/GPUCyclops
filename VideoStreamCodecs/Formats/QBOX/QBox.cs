@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Media.Formats.MP4;
 using Media.Formats.Generic;
+using Media.H264;
 
 namespace Media.Formats.QBOX
 {
@@ -718,10 +719,10 @@ namespace Media.Formats.QBOX
             totalSize += (int)(4 + naluLen);
             // parse the SPS bit stream, just to get the correct width and height of video.
             BitReader bitReader = new BitReader(new MemoryStream(v.sps));
-            H264SPS sps = new H264SPS();
+            SequenceParameterSet sps = new SequenceParameterSet((uint)naluLen);
             sps.Read(bitReader);
-            v.width = (ulong)sps.gWidth;
-            v.height = (ulong)sps.gHeight;
+            v.width = (ulong)sps.Width;
+            v.height = (ulong)sps.Height;
           }
           else if ((typ & 0x1Fu) == 8u)
           {

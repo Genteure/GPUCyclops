@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\CPUGenderDependencies.cs" />
     <Compile Include="Common\GenericMediaStreamFactory.cs" />
     <Compile Include="Common\ImageLib.cs" />
     <Compile Include="Common\IUniSerializable.cs" />
@@ -52,7 +53,6 @@
     <Compile Include="Driver\GenericRecodeNOC.cs" />
     <Compile Include="Driver\GenericRecodeWRC.cs" />
     <Compile Include="Formats\Generic\AudioCodec.cs" />
-    <Compile Include="Formats\Generic\BitReader.cs" />
     <Compile Include="Formats\Generic\CacheManager.cs" />
     <Compile Include="Formats\Generic\GenericAudioTrack.cs" />
     <Compile Include="Formats\Generic\GenericCacheManager.cs" />
@@ -185,6 +185,7 @@
     <Compile Include="Formats\MP4\MP4StreamReader.cs" />
     <Compile Include="Formats\MP4\MP4StreamWriter.cs" />
     <Compile Include="Formats\MP4\MP4TrackFormat.cs" />
+    <Compile Include="Formats\MP4\MP4VideoTrack.cs" />
     <Compile Include="Formats\MP4\Utils\Array.cs" />
     <Compile Include="Formats\MP4\Utils\AssetLock.cs" />
     <Compile Include="Formats\MP4\Utils\EnumUtils.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="H264\CodedSliceIDR.cs" />
     <Compile Include="H264\CodedSliceNonIDR.cs" />
     <Compile Include="H264\CodedSliceWithoutPartitioning.cs" />
+    <Compile Include="H264\H264Sample.cs" />
     <Compile Include="H264\HRDParams.cs" />
     <Compile Include="H264\MacroBlockLayer.cs" />
     <Compile Include="H264\MacroBlockPrediction.cs" />
@@ -220,10 +222,6 @@
     <Compile Include="H264\SubMacroBlockPrediction.cs" />
     <Compile Include="H264\VUIParams.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Formats\MP4\c051533_ISO_IEC_14496-12_2008.pdf" />
-    <None Include="Formats\MP4\[MS-MMSP] %282%29.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Formats\MP4\Asset Fragment.jpg" />

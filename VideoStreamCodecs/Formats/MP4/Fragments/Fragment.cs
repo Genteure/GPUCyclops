@@ -2,6 +2,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using Media.Formats.Generic;
+using Media.H264;
 
 namespace Media.Formats.MP4
 {
@@ -20,8 +21,8 @@ namespace Media.Formats.MP4
     private int _trackID;
     private List<StreamDataBlockInfo> _listOfSampleInfo;
 		private BoxReader _reader;
-    private H264SPS _sps; // sequence param set
-    private H264PPS _pps; // picture param set
+    private SequenceParameterSet _sps; // sequence param set
+    private PictureParameterSet _pps; // picture param set
 
     // _currentFrame is the running count of frames (or samples, or slices) across ALL fragments in the stream.
     // It is initialized to zero here, but is initialized again in one of the constructors to be the start time of this fragment.
@@ -388,7 +389,8 @@ namespace Media.Formats.MP4
         ulong naluLen = _reader.ReadUInt32();
         long nextPos = _reader.BaseStream.Position + (long)naluLen;
 
-				uint naluType = (uint)_reader.PeekChar() & 0x1Fu;
+        int c = _reader.PeekChar() & 0x1F;
+        NALUnitType naluType = (NALUnitType)c;
 
         if ((naluLen > (ulong)count) || (naluLen < 2))
           throw new Exception("Fragment: H264Payload has invalid NALU length"); ;
@@ -396,19 +398,19 @@ namespace Media.Formats.MP4
         BitReader bitReader = new BitReader(_reader.BaseStream);
         switch (naluType)
         {
-          case 0:
+          case NALUnitType.Unspecified:
             break;
-          case 1: // non-IDR picture
-          case 2: // slice A partition
-          case 5: // IDR picture
+          case NALUnitType.NonIDRSlice: // non-IDR picture
+          case NALUnitType.SlicePartitionA: // slice A partition
+          case NALUnitType.IDRSlice: // IDR picture
             if (oneFrameInfo.SliceType == SliceType.Unknown)
             {
-              H264SliceHeader header = new H264SliceHeader(_sps);
+              SliceHeader header = new SliceHeader(_sps, _pps, (byte)2, naluType, (uint)naluLen);
               header.Read(bitReader);
               oneFrameInfo.CTS = (ulong)header.FrameNum;
-              if ((header.SliceType == 1) || (header.SliceType == 6))
+              if ((header.SliceType == SliceTypes.B) || (header.SliceType == SliceTypes.BA))
                 oneFrameInfo.SliceType = SliceType.BFrame;
-              else if (naluType == 5)
+              else if (naluType == NALUnitType.IDRSlice)
                 oneFrameInfo.SliceType = SliceType.IFrame;
               else
                 oneFrameInfo.SliceType = SliceType.DFrame;
@@ -418,27 +420,27 @@ namespace Media.Formats.MP4
               int z = 0; // debug point
             }
             break;
-          case 3: // slice B partition
-          case 4: // slice C partition
+          case NALUnitType.SlicePartitionB: // slice B partition
+          case NALUnitType.SlicePartitionC: // slice C partition
             uint sliceID = bitReader.DecodeUnsignedExpGolomb();
             break;
-          case 6:
+          case NALUnitType.SupplementalEnhancementInfo:
             break;
-          case 7: // SPS
-            _sps = new H264SPS();
+          case NALUnitType.SequenceParamSet: // SPS
+            _sps = new SequenceParameterSet((uint)naluLen);
             _sps.Read(bitReader);
             break;
-          case 8:
-            _pps = new H264PPS();
+          case NALUnitType.PictureParamSet:
+            _pps = new PictureParameterSet((uint)naluLen);
             _pps.Read(bitReader);
             break;
-          case 9:
+          case NALUnitType.AccessUnitDelimiter:
             break;
-          case 10:
+          case NALUnitType.EndOfSequence:
             break;
-          case 11:
+          case NALUnitType.EndOfStream:
             break;
-          case 12:
+          case NALUnitType.FillerData:
             break;
           default:
             break;

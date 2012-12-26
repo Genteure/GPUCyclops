@@ -178,7 +178,7 @@ namespace Media.Formats.MP4
             DurationIn100NanoSecs = (ulong)TimeArithmetic.ConvertToStandardUnit(mmb.MovieHeaderBox.TimeScale, mmb.MovieHeaderBox.Duration);
             Hints.StreamTimeScale = mmb.MovieHeaderBox.TimeScale;
             if (!IsMediaStreamFragmented)
-              CreateTracks<GenericAudioTrack, GenericVideoTrack, MP4TrackFormat>();
+              CreateTracks<GenericAudioTrack, MP4VideoTrack, MP4TrackFormat>();
           }
         } // end of Read method
 

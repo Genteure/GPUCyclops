@@ -1,0 +1,7 @@
+Cyclops - one-eyed robot
+This project was started on November 17th, 2012 by C. Tapang.
+
+Summary:
+Use each frame of an MP4/H264 video stream to determine the location of the camera at the instant that frame was taken.
+The location is determined by comparing each camera frame to a number of renderings of the model of the world.
+Extract motion vectors from the MP4/H264 stream. Use those to glean where the camera is going, and where it is being aimed at.

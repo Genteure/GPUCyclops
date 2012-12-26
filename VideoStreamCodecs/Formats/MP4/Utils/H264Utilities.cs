@@ -6,6 +6,7 @@ using System.Net;
 using System.Globalization;
 using Common;
 using Media.Formats.Generic;
+using Media.H264;
 
 namespace Media.Formats.MP4
 {
@@ -89,9 +90,7 @@ namespace Media.Formats.MP4
       // false detection of start token. As it stands, there is a possibility of a false token in the data that could make the output
       // invalid.
       while (num2 > 4L) {
-          byte[] bytes = new byte[4];
-          reader.Read(bytes, 0, 4);
-          ulong num3 = ConvertToUint32(bytes);
+          ulong num3 = CPUGenderDependencies.UINT(reader.ReadUInt32());
           num2 -= ((ulong)4L) + num3;
           stream.WriteByte(0);
           stream.WriteByte(0);
@@ -224,11 +223,8 @@ namespace Media.Formats.MP4
       public static bool IsBitStream(Stream mdatStream)
       {
           BinaryReader reader = new BinaryReader(mdatStream);
-          uint first4ByteValue;
-          byte[] bytes = new byte[4];
-          reader.Read(bytes, 0, 4);
-          first4ByteValue = ConvertToUint32(bytes);
-          if ((first4ByteValue < 512) && (first4ByteValue > 255) && CheckNALUType(bytes[0], (byte)0)) // first 3 byte pattern is 001
+          uint first4ByteValue = CPUGenderDependencies.UINT(reader.ReadUInt32());
+          if ((first4ByteValue < 512) && (first4ByteValue > 255) && CheckNALUType((byte)first4ByteValue, (byte)0)) // first 3 byte pattern is 001
           {
               return true; // H264 bit stream
           }
@@ -244,9 +240,7 @@ namespace Media.Formats.MP4
       /// <returns>True if byte counts are found.</returns>
       public static bool IsNALBlockFormat(BinaryReader reader, uint size, out uint totalSize)
       {
-          byte[] bytes = new byte[4];
-          reader.Read(bytes, 0, 4);
-          uint count = ConvertToUint32(bytes);
+          uint count = CPUGenderDependencies.UINT(reader.ReadUInt32());
           totalSize = size; // size is unchanged
           if (count == 0)
           {
@@ -349,21 +343,6 @@ namespace Media.Formats.MP4
           return buf;
       }
 
-
-      // Assume that we are on a big-endian system.
-      // We swap the bytes: would the input array remain swapped upon return? Yes.
-      static uint ConvertToUint32(byte[] bytes)
-      {
-          byte tmp;
-          tmp = bytes[0];
-          bytes[0] = bytes[3];
-          bytes[3] = tmp;
-          tmp = bytes[1];
-          bytes[1] = bytes[2];
-          bytes[2] = tmp;
-          return System.BitConverter.ToUInt32(bytes, 0);
-      }
-
       static byte previousC = 0;
 
       const byte NALUTypeMask = 0x1F;
@@ -463,12 +442,7 @@ namespace Media.Formats.MP4
           Stream stream = new MemoryStream();
           for (; inStream.BaseStream.Position < (offset + size) ; )
           {
-              inStream.Read(bytes, 0, 4);
-              copyBytes[0] = bytes[0];
-              copyBytes[1] = bytes[1];
-              copyBytes[2] = bytes[2];
-              copyBytes[3] = bytes[3];
-              count = ConvertToUint32(bytes);
+              count = CPUGenderDependencies.UINT(inStream.ReadUInt32());
               if ((count == 0) || (count > (inStream.BaseStream.Length - inStream.BaseStream.Position)))
                   return stream;
               NALByte = inStream.ReadByte();
