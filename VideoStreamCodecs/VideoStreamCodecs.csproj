@@ -211,6 +211,7 @@
     <Compile Include="H264\HRDParams.cs" />
     <Compile Include="H264\MacroBlockLayer.cs" />
     <Compile Include="H264\MacroBlockPrediction.cs" />
+    <Compile Include="H264\MiscellaneousNALUs.cs" />
     <Compile Include="H264\NetworkAbstractionLayerUnit.cs" />
     <Compile Include="H264\PictureParameterSet.cs" />
     <Compile Include="H264\ResidualBlockCABAC.cs" />

@@ -147,6 +147,11 @@ namespace Media.H264
       return _binaryReader.ReadByte();
     }
 
+    public byte PeekByte()
+    {
+      return (byte)_binaryReader.PeekChar();
+    }
+
     public void Close()
     {
       _binaryReader.Close();

@@ -19,7 +19,7 @@ namespace Media.Formats.Generic {
       set;
     }
 
-    public IMediaStream ParentStream
+    public virtual IMediaStream ParentStream
     {
       get;
       set;

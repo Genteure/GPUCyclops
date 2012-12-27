@@ -91,10 +91,9 @@ namespace Media.H264
 
     public bool MoreRBSPData(BitReader bitReader)
     {
-      long end = _positionInStream + NumBytes;
+      long end = _positionInStream + NumBytes - 1;
       if (bitReader.Position < end)
         return true;
-      bitReader.DiscardTrailingBits();
       return false;
     }
   }

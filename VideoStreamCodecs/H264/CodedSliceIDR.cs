@@ -11,5 +11,10 @@ namespace Media.H264
       : base(sps, pps, (byte)1, NALUnitType.IDRSlice, size)
     {
     }
+
+    public override void Read(BitReader bitReader)
+    {
+      base.Read(bitReader);
+    }
   }
 }
