@@ -11,6 +11,7 @@ namespace Media.H264
     private PictureParameterSet _pps;
     private SliceHeader _header;
 
+    bool CABACAlignmentOneBit;
     uint CurrMbAddr; // current macro block address
     bool moreDataFlag;
     bool prevMbSkipped; // previous macro block skipped?
@@ -28,32 +29,33 @@ namespace Media.H264
       if (_pps.EntropyCodingModeFlag)
       {
         while (!bitReader.ByteAligned)
-          bitReader.GetNextBit();
+          CABACAlignmentOneBit = bitReader.GetNextBit();
       }
 
-      CurrMbAddr = _header.FirstMBInSlice * (1u + (_header.MBaffFrameFlag ? 1u : 0u));
-      moreDataFlag = true;
-      prevMbSkipped = false;
-      do
-      {
-        if ((_header.SliceType != SliceTypes.I) && (_header.SliceType != SliceTypes.SI))
-        {
-          if (!_pps.EntropyCodingModeFlag)
-          {
-            MBSkipRun = bitReader.DecodeUnsignedExpGolomb();
-            prevMbSkipped = (MBSkipRun > 0);
-            for (int i = 0; i < MBSkipRun; i++)
-            {
-              CurrMbAddr = NextMBAddress(CurrMbAddr);
-            }
-            moreDataFlag = _header.MoreRBSPData(bitReader);
-          }
-          else
-          {
-            //MBSkipFlag = bitReader.DecodeCABAC(_header.SliceType, SyntaxElement.MBSkipFlag);
-          }
-        }
-      } while (moreDataFlag);
+      //CurrMbAddr = _header.FirstMBInSlice * (1u + (_header.MBaffFrameFlag ? 1u : 0u));
+      //moreDataFlag = true;
+      //prevMbSkipped = false;
+      //do
+      //{
+      //  if ((_header.SliceType != SliceTypes.I) && (_header.SliceType != SliceTypes.SI))
+      //  {
+      //    if (!_pps.EntropyCodingModeFlag)
+      //    {
+      //      MBSkipRun = bitReader.DecodeUnsignedExpGolomb();
+      //      prevMbSkipped = (MBSkipRun > 0);
+      //      for (int i = 0; i < MBSkipRun; i++)
+      //      {
+      //        CurrMbAddr = NextMBAddress(CurrMbAddr);
+      //      }
+      //      moreDataFlag = _header.MoreRBSPData(bitReader);
+      //    }
+      //    else
+      //    {
+      //      CABACParser cabac = new CABACParser();
+      //      //MBSkipFlag = bitReader.DecodeCABAC(_header.SliceType, SyntaxElement.MBSkipFlag);
+      //    }
+      //  }
+      //} while (moreDataFlag);
     }
 
     // See Section 8.2.2 of H264 Spec, equation 8-17

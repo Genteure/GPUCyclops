@@ -78,7 +78,7 @@ namespace Media.H264
         throw new Exception("NALU base class: unexpected NALU type");
     }
 
-    protected void CheckSize(BitReader bitReader)
+    public void CheckSize(BitReader bitReader)
     {
       if (NumBytes != (uint)(bitReader.Position - _positionInStream))
         throw new Exception("NALU: CheckSize NOT ok");

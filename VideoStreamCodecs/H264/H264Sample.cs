@@ -12,6 +12,9 @@ namespace Media.H264
     private SequenceParameterSet _sps;
     private PictureParameterSet _pps;
 
+    public SliceTypes SliceType { get; private set; }
+    public uint FrameNum { get; private set; }
+
     public delegate void SampleDone(H264Sample sample);
     public SampleDone SampleDoneEvent;
 
@@ -57,10 +60,47 @@ namespace Media.H264
                 SupplementatlEnhancementMessage sei = new SupplementatlEnhancementMessage((uint)naluLen);
                 sei.Read(br);
               }
+              else if (naluType == NALUnitType.SequenceParamSet)
+              {
+                // replace _sps
+                _sps = new SequenceParameterSet((uint)naluLen);
+                _sps.Read(br);
+              }
+              else if (naluType == NALUnitType.PictureParamSet)
+              {
+                // replace _pps
+                _pps = new PictureParameterSet((uint)naluLen);
+                _pps.Read(br);
+              }
               else if (naluType == NALUnitType.IDRSlice)
               {
                 CodedSliceIDR idr = new CodedSliceIDR(_sps, _pps, (uint)naluLen);
                 idr.Read(br);
+                SliceType = idr.Header.SliceType;
+                FrameNum = idr.Header.FrameNum;
+                state = 2; // next should be zero or more redundant coded pictures
+              }
+              else if (naluType == NALUnitType.NonIDRSlice)
+              {
+                CodedSliceNonIDR nonIdr = new CodedSliceNonIDR(_sps, _pps, (uint)naluLen);
+                nonIdr.Read(br);
+                SliceType = nonIdr.Header.SliceType;
+                FrameNum = nonIdr.Header.FrameNum;
+                state = 2; // next should be zero or more redundant coded pictures
+              }
+              else if (naluType == NALUnitType.SlicePartitionA)
+              {
+                CodedSlicePartitionA partA = new CodedSlicePartitionA(_sps, _pps, (uint)naluLen);
+                partA.Read(br);
+                SliceType = partA.Header.SliceType;
+                FrameNum = partA.Header.FrameNum;
+                state = 2; // next should be zero or more redundant coded pictures
+              }
+              else if ((naluType == NALUnitType.SlicePartitionB) || (naluType == NALUnitType.SlicePartitionC))
+              {
+                CodedSlicePartitionBorC partBC = new CodedSlicePartitionBorC(_sps, _pps, 0, naluType, (uint)naluLen);
+                partBC.Read(br);
+                // FIXME: check that SliceType and FrameNum are set at this point
                 state = 2; // next should be zero or more redundant coded pictures
               }
               break;
@@ -70,7 +110,6 @@ namespace Media.H264
             default:
               break;
           }
-          //ParseNalu(br, naluLen);
           offset += naluLen;
           totalSize -= (naluLen + 4);
         }
@@ -79,12 +118,6 @@ namespace Media.H264
 
       if (SampleDoneEvent != null)
         SampleDoneEvent(this);
-    }
-
-    private void ParseNalu(BitReader br, int len)
-    {
-      byte firstByte = br.ReadByte();
-      br.Position += (len - 1);
     }
   }
 }

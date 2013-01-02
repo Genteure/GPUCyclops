@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Media.H264
 {
-  public class CodedSliceIDR : CodedSliceWithoutPartitioning
+  class CodedSliceIDR : CodedSliceBase
   {
     public CodedSliceIDR(SequenceParameterSet sps, PictureParameterSet pps, uint size)
-      : base(sps, pps, (byte)1, NALUnitType.IDRSlice, size)
+      : base(sps, pps, (byte)3, NALUnitType.IDRSlice, size)
     {
     }
 

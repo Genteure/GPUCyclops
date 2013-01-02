@@ -203,10 +203,13 @@
     <Compile Include="Formats\QBOX\QBoxVideoTrack.cs" />
     <Compile Include="Formats\QBOX\QMed.cs" />
     <Compile Include="H264\BitReader.cs" />
+    <Compile Include="H264\CABACParser.cs" />
     <Compile Include="H264\CABACTables.cs" />
+    <Compile Include="H264\CodedSliceBase.cs" />
     <Compile Include="H264\CodedSliceIDR.cs" />
     <Compile Include="H264\CodedSliceNonIDR.cs" />
-    <Compile Include="H264\CodedSliceWithoutPartitioning.cs" />
+    <Compile Include="H264\CodedSlicePartitionA.cs" />
+    <Compile Include="H264\CodedSlicePartitionBorC.cs" />
     <Compile Include="H264\H264Sample.cs" />
     <Compile Include="H264\HRDParams.cs" />
     <Compile Include="H264\MacroBlockLayer.cs" />

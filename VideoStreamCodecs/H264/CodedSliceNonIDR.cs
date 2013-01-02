@@ -5,11 +5,16 @@ using System.Text;
 
 namespace Media.H264
 {
-  public class CodedSliceNonIDR : CodedSliceWithoutPartitioning
+  class CodedSliceNonIDR : CodedSliceBase
   {
     public CodedSliceNonIDR(SequenceParameterSet sps, PictureParameterSet pps, uint size)
-      : base(sps, pps, (byte)0, NALUnitType.NonIDRSlice, size)
+      : base(sps, pps, (byte)3, NALUnitType.NonIDRSlice, size)
     {
+    }
+
+    public override void Read(BitReader bitReader)
+    {
+      base.Read(bitReader);
     }
   }
 }

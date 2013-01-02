@@ -24,8 +24,9 @@ namespace Media.H264
   /// Syntactically, a Slice comes as a header (SliceHeader) followed by a body (SliceBody).
   /// There are many MacroBlocks in a slice, and slices, in turn, make up a picture.
   /// </summary>
-  public class SliceHeader : NetworkAbstractionLayerUnit
+  public class SliceHeader
   {
+    private NetworkAbstractionLayerUnit _nalu;
     private SequenceParameterSet _sps;
     private PictureParameterSet _pps;
 
@@ -102,17 +103,15 @@ namespace Media.H264
     public uint SliceGroupChangeCycle;
     public uint[] MbToSliceGroupMap;
 
-    public SliceHeader(SequenceParameterSet sps, PictureParameterSet pps, Byte idc, NALUnitType naluType, uint size)
-      : base(idc, naluType, size)
+    public SliceHeader(SequenceParameterSet sps, PictureParameterSet pps, NetworkAbstractionLayerUnit nalu)
     {
+      _nalu = nalu;
       _sps = sps;
       _pps = pps;
     }
 
-    public override void Read(BitReader bitReader)
+    public void Read(BitReader bitReader)
     {
-      base.Read(bitReader);
-
       FirstMBInSlice = bitReader.DecodeUnsignedExpGolomb();
       uint st = bitReader.DecodeUnsignedExpGolomb();
       SliceType = (SliceTypes)st;
@@ -126,7 +125,7 @@ namespace Media.H264
           BottomFieldFlag = bitReader.GetNextBit();
       }
 
-      if (NALUType == NALUnitType.IDRSlice)
+      if (_nalu.NALUType == NALUnitType.IDRSlice)
       {
         IDRPictureID = bitReader.DecodeUnsignedExpGolomb();
       }
@@ -171,7 +170,7 @@ namespace Media.H264
         PredictionWeightTable(bitReader);
       }
 
-      if (NALRefIDC != 0)
+      if (_nalu.NALRefIDC != 0)
         DecodedReferencePictureMarking(bitReader);
 
       if (_pps.EntropyCodingModeFlag && (SliceType != SliceTypes.I) && (SliceType != SliceTypes.SI))
@@ -196,14 +195,11 @@ namespace Media.H264
         }
       }
 
-      if ((_pps.NumSliceGroupsMinus1 > 0) && (_pps.SliceGroupMapType >= 3) && (_pps.SliceGroupMapType == 5))
+      if ((_pps.NumSliceGroupsMinus1 > 0) && (_pps.SliceGroupMapType >= 3) && (_pps.SliceGroupMapType <= 5))
         SliceGroupChangeCycle = bitReader.GetUIntFromNBits(BitReader.CalcBitsNeededToRepresent(_pps.NumSliceGroupsMinus1 + 1));
 
       // once the header is read, we can derive the MacroBlock to SliceGroup mapping (Section 8.2.2 of H264 Spec)
       MbToSliceGroupMap = DeriveMB2SliceGroupMap();
-
-      // FIXME: for now, we will just advance to the slice body because we don't really need slice group mapping for what we want
-      base.SkipToEndOfNALU(bitReader);
     }
 
     // Use PPS and this header to derive macro block to slice group mapping
@@ -313,7 +309,7 @@ namespace Media.H264
 
     private void DecodedReferencePictureMarking(BitReader bitReader)
     {
-      if (NALUType == NALUnitType.IDRSlice)
+      if (_nalu.NALUType == NALUnitType.IDRSlice)
       {
         NoOutputOfPriorPicsFlag = bitReader.GetNextBit();
         LongTermReferenceFlag = bitReader.GetNextBit();

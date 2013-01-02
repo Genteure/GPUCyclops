@@ -384,71 +384,17 @@ namespace Media.Formats.MP4
       int count = oneFrameInfo.SliceSize;
       _reader.BaseStream.Position = (long)oneFrameInfo.StreamOffset;
       BinaryReader binReader = new BinaryReader(_reader.BaseStream);
-      while (count > 4)
-      {
-        ulong naluLen = _reader.ReadUInt32();
-        long nextPos = _reader.BaseStream.Position + (long)naluLen;
+      byte[] buf = _reader.ReadBytes(count);
+      H264Sample sample = new H264Sample(_sps, _pps, count);
+      sample.ParseSample(buf);
 
-        int c = _reader.PeekChar() & 0x1F;
-        NALUnitType naluType = (NALUnitType)c;
-
-        if ((naluLen > (ulong)count) || (naluLen < 2))
-          throw new Exception("Fragment: H264Payload has invalid NALU length"); ;
-
-        BitReader bitReader = new BitReader(_reader.BaseStream);
-        switch (naluType)
-        {
-          case NALUnitType.Unspecified:
-            break;
-          case NALUnitType.NonIDRSlice: // non-IDR picture
-          case NALUnitType.SlicePartitionA: // slice A partition
-          case NALUnitType.IDRSlice: // IDR picture
-            if (oneFrameInfo.SliceType == SliceType.Unknown)
-            {
-              SliceHeader header = new SliceHeader(_sps, _pps, (byte)2, naluType, (uint)naluLen);
-              header.Read(bitReader);
-              oneFrameInfo.CTS = (ulong)header.FrameNum;
-              if ((header.SliceType == SliceTypes.B) || (header.SliceType == SliceTypes.BA))
-                oneFrameInfo.SliceType = SliceType.BFrame;
-              else if (naluType == NALUnitType.IDRSlice)
-                oneFrameInfo.SliceType = SliceType.IFrame;
-              else
-                oneFrameInfo.SliceType = SliceType.DFrame;
-            }
-            else
-            {
-              int z = 0; // debug point
-            }
-            break;
-          case NALUnitType.SlicePartitionB: // slice B partition
-          case NALUnitType.SlicePartitionC: // slice C partition
-            uint sliceID = bitReader.DecodeUnsignedExpGolomb();
-            break;
-          case NALUnitType.SupplementalEnhancementInfo:
-            break;
-          case NALUnitType.SequenceParamSet: // SPS
-            _sps = new SequenceParameterSet((uint)naluLen);
-            _sps.Read(bitReader);
-            break;
-          case NALUnitType.PictureParamSet:
-            _pps = new PictureParameterSet((uint)naluLen);
-            _pps.Read(bitReader);
-            break;
-          case NALUnitType.AccessUnitDelimiter:
-            break;
-          case NALUnitType.EndOfSequence:
-            break;
-          case NALUnitType.EndOfStream:
-            break;
-          case NALUnitType.FillerData:
-            break;
-          default:
-            break;
-        }
-
-        count -= ((int)naluLen + 4);
-        _reader.BaseStream.Position = nextPos;
-      }
+      oneFrameInfo.CTS = (ulong)sample.FrameNum;
+      if ((sample.SliceType == SliceTypes.B) || (sample.SliceType == SliceTypes.BA))
+        oneFrameInfo.SliceType = SliceType.BFrame;
+      else if ((sample.SliceType == SliceTypes.I) || (sample.SliceType == SliceTypes.IA))
+        oneFrameInfo.SliceType = SliceType.IFrame;
+      else
+        oneFrameInfo.SliceType = SliceType.DFrame;
     }
 
 
