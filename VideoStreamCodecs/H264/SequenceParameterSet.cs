@@ -39,7 +39,7 @@ namespace Media.H264
     public VUIParams vuiParams;
 
     public SequenceParameterSet(uint size)
-      : base((byte)3, NALUnitType.SequenceParamSet, size)
+      : base((byte)1, NALUnitType.SequenceParamSet, size)
     {
     }
 

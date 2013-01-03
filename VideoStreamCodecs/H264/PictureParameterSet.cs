@@ -29,7 +29,7 @@ namespace Media.H264
     public bool ConstrainedIntraPredFlag;
     public bool RedundantPICCountPresentFlag;
 
-    public PictureParameterSet(uint size) : base((byte)3, NALUnitType.PictureParamSet, size)
+    public PictureParameterSet(uint size) : base((byte)1, NALUnitType.PictureParamSet, size)
     {
     }
 

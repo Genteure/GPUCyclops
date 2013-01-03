@@ -31,6 +31,14 @@ namespace Media.H264
       ParseThreadProc(sliceBytes);
     }
 
+    private byte prevIDC = 0xFF;
+    private byte GetIDC(byte curIDC)
+    {
+      if ((prevIDC != 0xFF) && (curIDC != prevIDC))
+        throw new Exception("H264Sample: Inconsistent IDC");
+      return curIDC;
+    }
+
     void ParseThreadProc(object buffer)
     {
       byte[] sliceBytes = buffer as byte[];
@@ -45,7 +53,9 @@ namespace Media.H264
           throw new Exception("H264 parsing: wrong byte count encountered");
         if (naluLen > 0)
         {
-          NALUnitType naluType = (NALUnitType)(br.PeekByte() & 0x1F);
+          byte b = br.PeekByte();
+          byte refIDC = (byte)(b >> 5);
+          NALUnitType naluType = (NALUnitType)(b & 0x1F);
           switch (state)
           {
             case 0:
@@ -82,7 +92,7 @@ namespace Media.H264
               }
               else if (naluType == NALUnitType.NonIDRSlice)
               {
-                CodedSliceNonIDR nonIdr = new CodedSliceNonIDR(_sps, _pps, (uint)naluLen);
+                CodedSliceNonIDR nonIdr = new CodedSliceNonIDR(_sps, _pps, GetIDC(refIDC), (uint)naluLen);
                 nonIdr.Read(br);
                 SliceType = nonIdr.Header.SliceType;
                 FrameNum = nonIdr.Header.FrameNum;
@@ -90,7 +100,7 @@ namespace Media.H264
               }
               else if (naluType == NALUnitType.SlicePartitionA)
               {
-                CodedSlicePartitionA partA = new CodedSlicePartitionA(_sps, _pps, (uint)naluLen);
+                CodedSlicePartitionA partA = new CodedSlicePartitionA(_sps, _pps, GetIDC(refIDC), (uint)naluLen);
                 partA.Read(br);
                 SliceType = partA.Header.SliceType;
                 FrameNum = partA.Header.FrameNum;
@@ -98,7 +108,7 @@ namespace Media.H264
               }
               else if ((naluType == NALUnitType.SlicePartitionB) || (naluType == NALUnitType.SlicePartitionC))
               {
-                CodedSlicePartitionBorC partBC = new CodedSlicePartitionBorC(_sps, _pps, 0, naluType, (uint)naluLen);
+                CodedSlicePartitionBorC partBC = new CodedSlicePartitionBorC(_sps, _pps, GetIDC(refIDC), naluType, (uint)naluLen);
                 partBC.Read(br);
                 // FIXME: check that SliceType and FrameNum are set at this point
                 state = 2; // next should be zero or more redundant coded pictures

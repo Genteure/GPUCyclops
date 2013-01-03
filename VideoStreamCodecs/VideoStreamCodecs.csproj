@@ -210,6 +210,7 @@
     <Compile Include="H264\CodedSliceNonIDR.cs" />
     <Compile Include="H264\CodedSlicePartitionA.cs" />
     <Compile Include="H264\CodedSlicePartitionBorC.cs" />
+    <Compile Include="H264\CodedSliceWithoutPartition.cs" />
     <Compile Include="H264\H264Sample.cs" />
     <Compile Include="H264\HRDParams.cs" />
     <Compile Include="H264\MacroBlockLayer.cs" />

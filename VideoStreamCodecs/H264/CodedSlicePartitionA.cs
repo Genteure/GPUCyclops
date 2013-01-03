@@ -9,14 +9,14 @@ namespace Media.H264
   {
     public uint SliceID;
 
-    public CodedSlicePartitionA(SequenceParameterSet sps, PictureParameterSet pps, uint size) 
-      : base(sps, pps, (byte)0, NALUnitType.SlicePartitionA, size)
+    public CodedSlicePartitionA(SequenceParameterSet sps, PictureParameterSet pps, byte idc, uint size) 
+      : base(sps, pps, idc, NALUnitType.SlicePartitionA, size)
     {
     }
 
     public override void Read(BitReader bitReader)
     {
-      base.Read(bitReader);
+      base.Read(bitReader); // read-in the NALU
       Header.Read(bitReader);
       SliceID = bitReader.DecodeUnsignedExpGolomb(); // this is not in base class
       Data.Read(bitReader);

@@ -26,8 +26,9 @@ namespace Media.H264
 
     public override void Read(BitReader bitReader)
     {
-      base.Read(bitReader);
+      base.Read(bitReader); // read-in the NALU
 
+      // NOTE: this coded slice has no Header (it should remain null)
       SliceID = bitReader.DecodeUnsignedExpGolomb();
       if (_pps.RedundantPICCountPresentFlag)
         RedundantPictureCount = bitReader.DecodeUnsignedExpGolomb();
