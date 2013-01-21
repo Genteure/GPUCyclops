@@ -29,6 +29,10 @@ namespace Media.H264
     public bool ConstrainedIntraPredFlag;
     public bool RedundantPICCountPresentFlag;
 
+    // used in SliceHeader to check slice type from other slices in same pic
+    public uint SliceTypeVal;
+    public uint SameCount;
+
     public PictureParameterSet(uint size) : base((byte)1, NALUnitType.PictureParamSet, size)
     {
     }

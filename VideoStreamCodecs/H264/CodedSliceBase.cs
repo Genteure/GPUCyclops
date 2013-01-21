@@ -15,7 +15,7 @@ namespace Media.H264
     {
       Nalu = new NetworkAbstractionLayerUnit(idc, naluType, size);
       Header = new SliceHeader(sps, pps, Nalu);
-      Data = new SliceData(sps, pps, Header);
+      Data = new SliceData(sps, pps, Header, Nalu);
     }
 
     public virtual void Read(BitReader bitReader)

@@ -46,7 +46,7 @@ namespace Media.H264
     public BitReader(Stream byteStream)
     {
       _binaryReader = new BinaryReader(byteStream);
-      _probeShifter = 0;
+      _probeShifter = 1; // byte aligned
       End = false;
     }
 
@@ -144,6 +144,10 @@ namespace Media.H264
     /// <returns></returns>
     public byte ReadByte()
     {
+      if (!ByteAligned)
+      {
+        throw new Exception("BitReader: reading byte at non-aligned position");
+      }
       return _binaryReader.ReadByte();
     }
 

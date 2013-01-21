@@ -50,9 +50,9 @@ namespace Media.Formats.MP4
       // (hand-off the payload processing to a separate thread so this method
       // can return immediately)
       H264Sample sample = new H264Sample(_sps, _pps, ans.SliceSize);
-      samples.Add(sample);
       sample.SampleDoneEvent += CompletionCallback;
-      sample.ParseSample(ans.SliceBytes);
+      sample.ParseSample(ans.SliceBytes); // async call
+      samples.Add(sample);
       return (ans);
     }
 

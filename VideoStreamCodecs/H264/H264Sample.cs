@@ -67,7 +67,7 @@ namespace Media.H264
               // either SEI or SPS (if it's an SEI, don't change state)
               if (naluType == NALUnitType.SupplementalEnhancementInfo)
               {
-                SupplementatlEnhancementMessage sei = new SupplementatlEnhancementMessage((uint)naluLen);
+                SupplementatlEnhancementMessage sei = new SupplementatlEnhancementMessage(_sps, (uint)naluLen);
                 sei.Read(br);
               }
               else if (naluType == NALUnitType.SequenceParamSet)

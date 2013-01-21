@@ -44,6 +44,7 @@ namespace Media.H264
     public SliceTypes SliceType;
     public uint PICParameterSetID;
     public uint FrameNum;
+    public uint PrevRefFrameNum; // previous reference frame number (7.4.2.1.10)
 
     public bool MBaffFrameFlag { get { return (_sps.MBAdaptiveFrameField && FieldPicFlag); } }
 
@@ -110,11 +111,34 @@ namespace Media.H264
       _pps = pps;
     }
 
+    private SliceTypes ReadSliceType(BitReader bitReader)
+    {
+      uint st = bitReader.DecodeUnsignedExpGolomb();
+      if (st > 4)
+      {
+        if (_pps.SliceTypeVal == st)
+          _pps.SameCount++;
+        else
+        {
+          _pps.SliceTypeVal = st;
+          _pps.SameCount = 0;
+        }
+        st = st - 5;
+      }
+      else
+      {
+        if ((_pps.SliceTypeVal > 4) && (st == (_pps.SliceTypeVal - 5)))
+          _pps.SameCount++;
+        else
+          _pps.SliceTypeVal = 0;
+      }
+      return (SliceTypes)st;
+    }
+
     public void Read(BitReader bitReader)
     {
       FirstMBInSlice = bitReader.DecodeUnsignedExpGolomb();
-      uint st = bitReader.DecodeUnsignedExpGolomb();
-      SliceType = (SliceTypes)st;
+      SliceType = ReadSliceType(bitReader);
       PICParameterSetID = bitReader.DecodeUnsignedExpGolomb();
       FrameNum = bitReader.GetUIntFromNBits(_frameNumBits);
 
@@ -128,6 +152,7 @@ namespace Media.H264
       if (_nalu.NALUType == NALUnitType.IDRSlice)
       {
         IDRPictureID = bitReader.DecodeUnsignedExpGolomb();
+        PrevRefFrameNum = 0;
       }
 
       if (_sps.gPicOrderCntType == 0)
@@ -219,6 +244,8 @@ namespace Media.H264
           do
           {
             ReorderingOfPicNumsIDC = bitReader.DecodeUnsignedExpGolomb();
+            if (ReorderingOfPicNumsIDC > 3)
+              throw new Exception("SliceHeader: ReferencePictureListReordering 1, invalid pic nums IDC");
             if ((ReorderingOfPicNumsIDC == 0) || (ReorderingOfPicNumsIDC == 1))
               AbsDiffPicNumMinus1 = bitReader.DecodeUnsignedExpGolomb();
             else if (ReorderingOfPicNumsIDC == 2)
@@ -233,6 +260,8 @@ namespace Media.H264
           do
           {
             ReorderingOfPicNumsIDC = bitReader.DecodeUnsignedExpGolomb();
+            if (ReorderingOfPicNumsIDC > 3)
+              throw new Exception("SliceHeader: ReferencePictureListReordering 2, invalid pic nums IDC");
             if ((ReorderingOfPicNumsIDC == 0) || (ReorderingOfPicNumsIDC == 1))
               AbsDiffPicNumMinus1 = bitReader.DecodeUnsignedExpGolomb();
             else if (ReorderingOfPicNumsIDC == 2)
