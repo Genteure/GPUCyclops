@@ -46,15 +46,13 @@ namespace Media.H264
       EntropyCodingModeFlag = bitReader.GetNextBit();
       PICOrderPresentFlag = bitReader.GetNextBit();
       NumSliceGroupsMinus1 = bitReader.DecodeUnsignedExpGolomb();
-      RunLengthMinus1 = new uint[NumSliceGroupsMinus1 + 1];
-      TopLeft = new uint[NumSliceGroupsMinus1 + 1];
-      BottomRight = new uint[NumSliceGroupsMinus1 + 1];
       if (NumSliceGroupsMinus1 > 0)
       {
         SliceGroupMapType = bitReader.DecodeUnsignedExpGolomb();
         switch (SliceGroupMapType)
         {
           case 0:
+            RunLengthMinus1 = new uint[NumSliceGroupsMinus1 + 1];
             for (int grp = 0; grp <= NumSliceGroupsMinus1; grp++)
             {
               RunLengthMinus1[grp] = bitReader.DecodeUnsignedExpGolomb();
@@ -63,6 +61,8 @@ namespace Media.H264
           case 1:
             break;
           case 2:
+            TopLeft = new uint[NumSliceGroupsMinus1 + 1];
+            BottomRight = new uint[NumSliceGroupsMinus1 + 1];
             for (int grp = 0; grp <= NumSliceGroupsMinus1; grp++) // standards doc, this reads grp < NumSliceGroupsMinus1
             {
               TopLeft[grp] = bitReader.DecodeUnsignedExpGolomb();

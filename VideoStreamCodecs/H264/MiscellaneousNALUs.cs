@@ -196,8 +196,8 @@ namespace Media.H264
         throw new Exception("wrong sps ID in SEI");
       if (_sps.vuiParams.NALHRDParametersPresent)
       {
-        ushort icpbBitLen = _sps.vuiParams.HRDParams.InitialCpbRemovalDelayLength;
-        uint cpbCount = _sps.vuiParams.HRDParams.CpbCount;
+        ushort icpbBitLen = _sps.vuiParams.NalHRDParams.InitialCpbRemovalDelayLength;
+        uint cpbCount = _sps.vuiParams.NalHRDParams.CpbCount;
         InitialCPBRemovalDelay = new uint[cpbCount];
         InitialCPBRemovalDelayOffset = new uint[cpbCount];
         for (int i = 0; i < cpbCount; i++)
@@ -213,8 +213,8 @@ namespace Media.H264
       bool needForPresenceOfBufferingPeriods = true; 
       if (_sps.vuiParams.VclHRDParametersPresent || needForPresenceOfBufferingPeriods)
       {
-        ushort icpbBitLen = _sps.vuiParams.HRDParams.InitialCpbRemovalDelayLength;
-        uint cpbCount = _sps.vuiParams.HRDParams.CpbCount;
+        ushort icpbBitLen = _sps.vuiParams.VclHRDParams.InitialCpbRemovalDelayLength;
+        uint cpbCount = _sps.vuiParams.VclHRDParams.CpbCount;
         InitialCPBRemovalDelay = new uint[cpbCount];
         InitialCPBRemovalDelayOffset = new uint[cpbCount];
         for (int i = 0; i < cpbCount; i++)
@@ -232,10 +232,10 @@ namespace Media.H264
 
       if (CpbDpbDelaysPresent)
       {
-        CpbRemovalDelay = _bitReader.GetUIntFromNBits(_sps.vuiParams.HRDParams.CpbRemovalDelayLength);
-        if (_sps.vuiParams.MaxDecFrameBuffering > 0)
-          DpbOutputDelay = _bitReader.GetUIntFromNBits(_sps.vuiParams.HRDParams.DpbOutputDelayLength);
-        else DpbOutputDelay = 0;
+        CpbRemovalDelay = _bitReader.GetUIntFromNBits(_sps.vuiParams.VclHRDParams.CpbRemovalDelayLength);
+        DpbOutputDelay = _bitReader.GetUIntFromNBits(_sps.vuiParams.VclHRDParams.DpbOutputDelayLength);
+        if ((_sps.vuiParams.MaxDecFrameBuffering == 0) && (DpbOutputDelay != 0))
+          throw new Exception("SEI: DpbOutputDelay must be zero ");
       }
 
       if (_sps.vuiParams.PicStructPresent)
@@ -278,7 +278,7 @@ namespace Media.H264
               }
             }
 
-            ushort offLen = _sps.vuiParams.HRDParams.TimeOffsetLength;
+            ushort offLen = _sps.vuiParams.VclHRDParams.TimeOffsetLength;
             if (offLen > 0)
               TimeOffset = _bitReader.GetUIntFromNBits(offLen);
           }

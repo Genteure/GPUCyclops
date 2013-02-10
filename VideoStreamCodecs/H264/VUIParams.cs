@@ -49,7 +49,8 @@ namespace Media.H264
     public bool NALHRDParametersPresent; // 0 u(1)
     //if( nal_hrd_parameters_present_flag )
     //hrd_parameters()
-    public HRDParams HRDParams;
+    public HRDParams NalHRDParams;
+    public HRDParams VclHRDParams;
     public bool VclHRDParametersPresent; // 0 u(1)
     //if( vcl_hrd_parameters_present_flag )
     //hrd_parameters()
@@ -113,14 +114,14 @@ namespace Media.H264
       NALHRDParametersPresent = bitReader.GetNextBit();
       if (NALHRDParametersPresent)
       {
-        HRDParams = new HRDParams();
-        HRDParams.Read(bitReader);
+        NalHRDParams = new HRDParams();
+        NalHRDParams.Read(bitReader);
       }
       VclHRDParametersPresent = bitReader.GetNextBit();
       if (VclHRDParametersPresent)
       {
-        HRDParams = new HRDParams();
-        HRDParams.Read(bitReader);
+        VclHRDParams = new HRDParams();
+        VclHRDParams.Read(bitReader);
       }
       if (NALHRDParametersPresent || VclHRDParametersPresent)
         LowDelayHRDFlag = bitReader.GetNextBit();

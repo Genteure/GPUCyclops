@@ -1,0 +1,27 @@
+﻿Build started 2/7/2013 12:06:58 AM.
+     1>Project "C:\Users\CarlosT\Documents\GitHub\GPUCyclops\H.264\rtp_loss\rtp_loss_vc10.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug_Win32_vc10\rtp_loss.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug_Win32_vc10\\" /Fd"Debug_Win32_vc10\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt rtp_loss.cpp
+         rtp_loss.cpp
+       ManifestResourceCompile:
+         c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug_Win32_vc10\rtp_loss.exe.embed.manifest.res" Debug_Win32_vc10\rtp_loss_manifest.rc 
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\bin\rtp_loss.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug_Win32_vc10\rtp_loss.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\CarlosT\Documents\GitHub\GPUCyclops\H.264\bin\rtp_loss.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"..\bin\rtp_loss.lib" /MACHINE:X86 Debug_Win32_vc10\rtp_loss.exe.embed.manifest.res
+         Debug_Win32_vc10\rtp_loss.obj
+       Manifest:
+         c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug_Win32_vc10\rtp_loss.exe.embed.manifest" /manifest Debug_Win32_vc10\rtp_loss.exe.intermediate.manifest
+         c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug_Win32_vc10\rtp_loss.exe.embed.manifest.res" Debug_Win32_vc10\rtp_loss_manifest.rc 
+       LinkEmbedManifest:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\bin\rtp_loss.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug_Win32_vc10\rtp_loss.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\CarlosT\Documents\GitHub\GPUCyclops\H.264\bin\rtp_loss.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"..\bin\rtp_loss.lib" /MACHINE:X86 Debug_Win32_vc10\rtp_loss.exe.embed.manifest.res
+         Debug_Win32_vc10\rtp_loss.obj
+         rtp_loss_vc10.vcxproj -> C:\Users\CarlosT\Documents\GitHub\GPUCyclops\H.264\rtp_loss\..\bin\rtp_loss.exe
+       FinalizeBuildStatus:
+         Deleting file "Debug_Win32_vc10\rtp_loss.unsuccessfulbuild".
+         Touching "Debug_Win32_vc10\rtp_loss.lastbuildstate".
+     1>Done Building Project "C:\Users\CarlosT\Documents\GitHub\GPUCyclops\H.264\rtp_loss\rtp_loss_vc10.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:05.70

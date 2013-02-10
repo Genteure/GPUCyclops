@@ -189,7 +189,7 @@
     <Compile Include="Formats\MP4\Utils\Array.cs" />
     <Compile Include="Formats\MP4\Utils\AssetLock.cs" />
     <Compile Include="Formats\MP4\Utils\EnumUtils.cs" />
-    <Compile Include="Formats\MP4\Utils\H264Utilities.cs" />
+    <Compile Include="H264\H264Utilities.cs" />
     <Compile Include="Formats\MP4\Utils\MP4Utils.cs" />
     <Compile Include="Formats\MP4\Utils\SizeCalculator.cs" />
     <Compile Include="Formats\MP4\Utils\SizeChecker.cs" />
@@ -202,9 +202,13 @@
     <Compile Include="Formats\QBOX\QBoxUtils.cs" />
     <Compile Include="Formats\QBOX\QBoxVideoTrack.cs" />
     <Compile Include="Formats\QBOX\QMed.cs" />
+    <Compile Include="Formats\RawH264\H264Stream.cs" />
     <Compile Include="H264\BitReader.cs" />
-    <Compile Include="H264\CABACParser.cs" />
-    <Compile Include="H264\CABACTables.cs" />
+    <Compile Include="H264\CABAC\CABACBaseClass.cs" />
+    <Compile Include="H264\CABAC\CodedBlockPattern.cs" />
+    <Compile Include="H264\CABAC\MBQPDelta.cs" />
+    <Compile Include="H264\CABAC\MBTypeCABACParser.cs" />
+    <Compile Include="H264\CABAC\CABACTables.cs" />
     <Compile Include="H264\CodedSliceBase.cs" />
     <Compile Include="H264\CodedSliceIDR.cs" />
     <Compile Include="H264\CodedSliceNonIDR.cs" />
@@ -218,8 +222,6 @@
     <Compile Include="H264\MiscellaneousNALUs.cs" />
     <Compile Include="H264\NetworkAbstractionLayerUnit.cs" />
     <Compile Include="H264\PictureParameterSet.cs" />
-    <Compile Include="H264\ResidualBlockCABAC.cs" />
-    <Compile Include="H264\ResidualBlockCAVLC.cs" />
     <Compile Include="H264\ResidualData.cs" />
     <Compile Include="H264\SequenceParameterSet.cs" />
     <Compile Include="H264\SliceData.cs" />
@@ -232,6 +234,7 @@
     <Content Include="Formats\MP4\Asset Fragment.jpg" />
     <Content Include="Formats\MP4\Smooth Format.jpg" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

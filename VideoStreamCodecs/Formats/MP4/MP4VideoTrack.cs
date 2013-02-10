@@ -49,10 +49,12 @@ namespace Media.Formats.MP4
       // for processing:
       // (hand-off the payload processing to a separate thread so this method
       // can return immediately)
+#if MV_Centerus
       H264Sample sample = new H264Sample(_sps, _pps, ans.SliceSize);
       sample.SampleDoneEvent += CompletionCallback;
       sample.ParseSample(ans.SliceBytes); // async call
       samples.Add(sample);
+#endif
       return (ans);
     }
 

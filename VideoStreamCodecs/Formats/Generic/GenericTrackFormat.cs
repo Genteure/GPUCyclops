@@ -11,8 +11,17 @@ namespace Media.Formats.Generic
     public event LazyRead FetchNextBatch;
 
     // properties that must be implemented in derived classes
-    public virtual string PayloadType { get { return ""; } }
-    public virtual Codec Codec { get { return null; } set { ; } }
+    public virtual string PayloadType 
+    {
+      get { throw new Exception("Need to implement get PayloadType"); }
+    }
+
+    public virtual Codec Codec 
+    {
+      get { throw new Exception("Need to implement get Codec"); }
+      set { throw new Exception("Need to implement set Codec"); }
+    }
+
     //public virtual uint TimeScale { get { return 0; } } // handler-specific, should not exist here
 
     // Duration should be in units of 100 Nanosecs.

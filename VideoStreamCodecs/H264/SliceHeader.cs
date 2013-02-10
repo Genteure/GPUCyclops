@@ -10,12 +10,7 @@ namespace Media.H264
     B, // B Slice
     I, // I Slice
     SP, // SP Slice
-    SI, // SI Slice
-    PA, // P Slice (for all slices in picture)
-    BA, // B Slice (for all slices in picture)
-    IA, // I Slice (for all slices in picture)
-    SPA, // SP Slice (for all slices in picture)
-    SIA // SI Slice (for all slices in picture)
+    SI // SI Slice
   }
 
   /// <summary>
@@ -94,10 +89,12 @@ namespace Media.H264
     public uint MaxLongTermFrameIdxPlus1;
 
     // more
-    public uint CABACInitIDC;
+    public byte CABACInitIDC;
     public int SliceQPDelta;
+    public int SliceQPy;
     public bool SP4SwitchFlag;
     public int SliceQSDelta;
+    public int SliceQSy;
     public uint DisableDeblockingFilterIDC;
     public int SliceAlphaC0OffsetDiv2;
     public int SliceBetaOffsetDiv2;
@@ -199,15 +196,23 @@ namespace Media.H264
         DecodedReferencePictureMarking(bitReader);
 
       if (_pps.EntropyCodingModeFlag && (SliceType != SliceTypes.I) && (SliceType != SliceTypes.SI))
-        CABACInitIDC = bitReader.DecodeUnsignedExpGolomb();
+      {
+        uint initIdc = bitReader.DecodeUnsignedExpGolomb();
+        if (initIdc < 4)
+          CABACInitIDC = (byte)initIdc;
+        else
+          throw new Exception("SliceHeader: bad CABACInitIDC");
+      }
 
       SliceQPDelta = bitReader.DecodeSignedExpGolomb();
+      SliceQPy = 26 + _pps.PICInitQPMinus26 + SliceQPDelta;
 
       if ((SliceType == SliceTypes.SP) || (SliceType == SliceTypes.SI))
       {
         if (SliceType == SliceTypes.SP)
           SP4SwitchFlag = bitReader.GetNextBit();
         SliceQSDelta = bitReader.DecodeSignedExpGolomb();
+        SliceQSy = 26 + _pps.PICInitQSMinus26 + SliceQSDelta;
       }
 
       if (_pps.DeblockingFilterControlPresentFlag)
@@ -224,13 +229,49 @@ namespace Media.H264
         SliceGroupChangeCycle = bitReader.GetUIntFromNBits(BitReader.CalcBitsNeededToRepresent(_pps.NumSliceGroupsMinus1 + 1));
 
       // once the header is read, we can derive the MacroBlock to SliceGroup mapping (Section 8.2.2 of H264 Spec)
-      MbToSliceGroupMap = DeriveMB2SliceGroupMap();
+      if (_pps.NumSliceGroupsMinus1 > 0)
+        MbToSliceGroupMap = DeriveMB2SliceGroupMap();
+    }
+
+    public bool MBlocksInSameSlice(uint i, uint j)
+    {
+      return MbToSliceGroupMap[i] == MbToSliceGroupMap[j];
     }
 
     // Use PPS and this header to derive macro block to slice group mapping
     private uint[] DeriveMB2SliceGroupMap()
     {
-      uint[] mb2sgm = new uint[1];
+      uint[] mb2sgm = new uint[_pps.PICSizeInMapUnitsMinus1 + 1];
+
+      switch (_pps.SliceGroupMapType)
+      {
+        case 0:
+          if (_pps.NumSliceGroupsMinus1 == 0 || _pps.RunLengthMinus1 == null)
+            throw new Exception("SliceHeader: header data inconsistent with PPS");
+          uint i = 0;
+          do
+          {
+            for (uint igroup = 0; igroup <= _pps.NumSliceGroupsMinus1 && i <= _pps.PICSizeInMapUnitsMinus1; i += _pps.RunLengthMinus1[igroup++] + 1)
+              for (uint j = 0; j <= _pps.RunLengthMinus1[igroup] && i + j <= _pps.PICSizeInMapUnitsMinus1; j++)
+                mb2sgm[i + j] = igroup;
+          }
+          while (i <= _pps.PICSizeInMapUnitsMinus1);
+          break;
+        case 1:
+          break;
+        case 2:
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+        case 5:
+          break;
+        case 6:
+          break;
+        default:
+          throw new Exception("SliceHeader: invalid SliceGroupMapType in PPS");
+      }
       mb2sgm[0] = 0; // FIXME: single element with zero value for now
       return mb2sgm;
     }

@@ -8,6 +8,7 @@ using Media.Formats.MicrosoftFMP4;
 using Media.Formats.MP4;
 using Media.Formats.QBOX;
 using Media.Formats.Generic;
+using Media.Formats.RawH264;
 using System.Collections.Generic;
 
 namespace Media.Formats {
@@ -114,7 +115,16 @@ namespace Media.Formats {
             igms = (IMediaStream)(new FileSequence());
             //igms.Create(fs);
           }
-        break;
+          break;
+        case ".264":
+          if (mode == FileMode.Open)
+            throw new Exception("Raw 264 file read unsupported for now");
+          else
+          {
+            igms = (IMediaStream)(new H264Stream());
+            igms.Create(fs, true); // forced caching
+          }
+          break;
         default:
           throw new Exception("Unknown media file extension");
       }

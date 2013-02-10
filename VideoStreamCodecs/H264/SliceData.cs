@@ -12,6 +12,24 @@ namespace Media.H264
     private SliceHeader _header;
     private NetworkAbstractionLayerUnit _nalu;
 
+    public MBTypeCABACParser MBTypeParser
+    {
+      get;
+      private set;
+    }
+
+    public CodedBlockPattern CBP
+    {
+      get;
+      private set;
+    }
+
+    public MBQPDelta MBQPD
+    {
+      get;
+      private set;
+    }
+
     bool CABACAlignmentOneBit;
     uint CurrMbAddr; // current macro block address
     bool moreDataFlag;
@@ -26,6 +44,12 @@ namespace Media.H264
       _sps = sps;
       _pps = pps;
       _header = header;
+      if (_pps.EntropyCodingModeFlag)
+      {
+        MBTypeParser = new MBTypeCABACParser(_pps, header);
+        CBP = new CodedBlockPattern(_pps, _header);
+        MBQPD = new MBQPDelta(_pps, _header);
+      }
     }
 
     public SliceData(SequenceParameterSet sps, PictureParameterSet pps, SliceHeader header, NetworkAbstractionLayerUnit nalu) : this(sps, pps, header)
@@ -61,7 +85,7 @@ namespace Media.H264
           }
           else
           {
-            mbSkipFlag = bitReader.GetNextBit();
+            mbSkipFlag = false; // FIXME: CABAC value bitReader.GetNextBit();
             moreDataFlag = !mbSkipFlag;
           }
         }
@@ -70,9 +94,9 @@ namespace Media.H264
         {
           if (_header.MBaffFrameFlag && (CurrMbAddr % 2 == 0 || (CurrMbAddr % 2 == 1 && prevMbSkipped)))
           {
-            mbFieldDecodingFlag = bitReader.GetNextBit();
+            mbFieldDecodingFlag = false; // FIXME: CABAC value bitReader.GetNextBit();
           }
-          MacroBlockLayer mbLayer = new MacroBlockLayer();
+          MacroBlockLayer mbLayer = new MacroBlockLayer(_sps, _pps, _header, this);
           mbLayer.Read(bitReader);
         }
 
@@ -86,7 +110,7 @@ namespace Media.H264
             moreDataFlag = true;
           else
           {
-            endOfSliceFlag = bitReader.GetNextBit();
+            endOfSliceFlag = bitReader.GetNextBit(); // FIXME: random bit bec. residual is not read
             moreDataFlag = !endOfSliceFlag;
           }
         }
@@ -101,8 +125,13 @@ namespace Media.H264
     private uint NextMBAddress(uint addr)
     {
       uint i = addr + 1;
-      //while ((i < _sps.PicSizeInMBs) && (_pps.map
-      return 0;
+
+      if (_pps.NumSliceGroupsMinus1 > 0)
+      {
+        while (i < _sps.PicSizeInMBs && !_header.MBlocksInSameSlice(i, addr)) i++;
+      }
+
+      return i;
     }
   }
 }

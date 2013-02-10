@@ -389,9 +389,9 @@ namespace Media.Formats.MP4
       sample.ParseSample(buf);
 
       oneFrameInfo.CTS = (ulong)sample.FrameNum;
-      if ((sample.SliceType == SliceTypes.B) || (sample.SliceType == SliceTypes.BA))
+      if (sample.SliceType == SliceTypes.B)
         oneFrameInfo.SliceType = SliceType.BFrame;
-      else if ((sample.SliceType == SliceTypes.I) || (sample.SliceType == SliceTypes.IA))
+      else if (sample.SliceType == SliceTypes.I)
         oneFrameInfo.SliceType = SliceType.IFrame;
       else
         oneFrameInfo.SliceType = SliceType.DFrame;

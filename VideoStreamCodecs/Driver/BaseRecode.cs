@@ -170,11 +170,14 @@ namespace Driver
         });
       }
 
-      RawAudioTrackInfo rati = (RawAudioTrackInfo)TrackInfo.First(t => t is RawAudioTrackInfo);
-      if ((rati != null) && (audioOrVideoOrBoth == TracksIncluded.Video))
+      if (TrackInfo.Any(t => t is RawAudioTrackInfo))
       {
-        TrackInfo.Remove(rati);
-        rati = null;
+        RawAudioTrackInfo rati = (RawAudioTrackInfo)TrackInfo.First(t => t is RawAudioTrackInfo);
+        if ((rati != null) && (audioOrVideoOrBoth == TracksIncluded.Video))
+        {
+          TrackInfo.Remove(rati);
+          rati = null;
+        }
       }
 
       if (audioOrVideoOrBoth == TracksIncluded.Audio)

@@ -43,6 +43,59 @@ namespace Media.H264
     byte _probeShifter;
     byte _currByte;
 
+    // Table 9-4, p. 156 of the H264 standard
+    byte[][] CBP = new byte[][]
+    {
+      new byte[2] {47, 0},
+      new byte[2] {31, 16},
+      new byte[2] {15, 1},
+      new byte[2] {0, 2},
+      new byte[2] {23, 4},
+      new byte[2] {27, 8},
+      new byte[2] {29, 32},
+      new byte[2] {30, 3},
+      new byte[2] {7, 5},
+      new byte[2] {11, 10},
+      new byte[2] {13, 12},
+      new byte[2] {14, 15},
+      new byte[2] {39, 47},
+      new byte[2] {43, 7},
+      new byte[2] {45, 11},
+      new byte[2] {46, 13},
+      new byte[2] {16, 14},
+      new byte[2] {3, 6},
+      new byte[2] {5, 9},
+      new byte[2] {10, 31},
+      new byte[2] {12, 35},
+      new byte[2] {19, 37},
+      new byte[2] {21, 42},
+      new byte[2] {26, 44},
+      new byte[2] {28, 33},
+      new byte[2] {35, 34},
+      new byte[2] {37, 36},
+      new byte[2] {42, 40},
+      new byte[2] {44, 39},
+      new byte[2] {1, 43},
+      new byte[2] {2, 45},
+      new byte[2] {4, 46},
+      new byte[2] {8, 17},
+      new byte[2] {17, 18},
+      new byte[2] {18, 20},
+      new byte[2] {20, 24},
+      new byte[2] {24, 19},
+      new byte[2] {6, 21},
+      new byte[2] {9, 26},
+      new byte[2] {22, 28},
+      new byte[2] {25, 23},
+      new byte[2] {32, 27},
+      new byte[2] {33, 29},
+      new byte[2] {34, 30},
+      new byte[2] {36, 22},
+      new byte[2] {40, 25},
+      new byte[2] {38, 38},
+      new byte[2] {41, 41}
+    };
+
     public BitReader(Stream byteStream)
     {
       _binaryReader = new BinaryReader(byteStream);
@@ -70,6 +123,8 @@ namespace Media.H264
           if (End) // if we've already read beyond the end, don't go any further
             throw new Exception("BitReader: attempt to read beyond end for the second time");
           _currByte = _binaryReader.ReadByte();
+          if (Position == _binaryReader.BaseStream.Length)
+            End = true;
         }
         catch (Exception ex)
         {
@@ -81,7 +136,6 @@ namespace Media.H264
           else throw ex;
         }
         _probeShifter = 0x80;
-        return ((_currByte & _probeShifter) != 0);
       }
       return ((_currByte & _probeShifter) != 0);
     }
@@ -116,6 +170,8 @@ namespace Media.H264
     {
       ushort q = 0;
       while (!GetNextBit()) q++;
+      if (q == 0)
+        return 0;
       if (q > 31)
         throw new Exception("Bad RBSP");
       uint m = GetUIntFromNBits(q);
@@ -129,6 +185,22 @@ namespace Media.H264
         return (retVal + 1) / 2;
       else
         return (-retVal) / 2;
+    }
+
+    public int DecodeMappedIntraExpGolomb()
+    {
+      uint val = DecodeUnsignedExpGolomb();
+      if (val > 47)
+        throw new Exception("Bad index for coded block pattern, Intra");
+      return (int)CBP[val][0]; // [zero]
+    }
+
+    public int DecodeMappedExpGolomb()
+    {
+      uint val = DecodeUnsignedExpGolomb();
+      if (val > 47)
+        throw new Exception("Bad index for coded block pattern");
+      return (int)CBP[val][1]; // [one]
     }
 
     public int DecodeCABAC(SliceHeader header, SyntaxElement se)
@@ -168,7 +240,7 @@ namespace Media.H264
       while (_probeShifter > 1)
       {
         if (GetNextBit() == true)
-          throw new Exception("BitReader: bit must be zero in trailing RBSP bits");
+          ; // throw new Exception("BitReader: bit must be zero in trailing RBSP bits");
       }
     }
 

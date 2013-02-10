@@ -71,7 +71,7 @@ namespace Media.H264
       _positionInStream = bitReader.Position;
       Byte firstByte = bitReader.ReadByte();
       Byte idc = (Byte)(firstByte >> 5);
-      if (idc != NALRefIDC) //((idc > 0) != (NALRefIDC > 0)) // if it's not as expected, then throw exception
+      if ((idc > 0) != (NALRefIDC > 0)) // if it's not as expected, then throw exception
         throw new Exception("NALU base class: unexpected Ref IDC");
       NALUnitType naluType = (NALUnitType)(firstByte & 0x1F);
       if (naluType != NALUType)

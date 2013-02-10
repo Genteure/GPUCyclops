@@ -121,6 +121,11 @@ namespace Driver
 					 n++;
 				 }
 
+         if (destination == null)
+         {
+           throw new Exception(string.Format("No {0} destination track. Try vo or so option.", recodeSet.sourceTrack.CodecType));
+         }
+
 				 // normally the destination TrackDurationIn100NanoSecs is set to source duration;
 				 // here we reset its value back to zero because it may be smaller than source duration
 				 // (for example, if the start time is more than zero).
