@@ -42,6 +42,7 @@ local.properties
 *.sln.docstates
 
 # Build results
+[Dd]ebug_[Ww]in32_vc10/
 [Dd]ebug/
 [Rr]elease/
 *_i.c
@@ -62,6 +63,9 @@ local.properties
 *.vspscc
 .builds
 *.dotCover
+*.tlog
+*.log
+*.idb
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 #packages/
